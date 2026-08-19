@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CV - Nama Anda</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="manifest" href="manifest.json" />
+</head>
+<body>
+  <main class="cv-container">
+    <aside class="left-panel">
+      <div class="photo-wrap">
+        <img id="profilePhoto" src="photo.jpg" alt="Foto Profil" />
+      </div>
+      <h1 id="name">Nama Anda</h1>
+      <p class="role">Student / Pelajar</p>
+
+      <section class="card">
+        <h3>Kontak</h3>
+        <p><strong>Telepon</strong> <span id="phone">0812xxxx</span></p>
+        <p><strong>Email</strong> <span id="email">email@domain.com</span></p>
+        <p><strong>Instagram</strong> <span id="ig">@username</span></p>
+      </section>
+
+      <section class="card">
+        <h3>Skill</h3>
+        <ul id="skills">
+          <li>Contoh skill 1</li>
+          <li>Contoh skill 2</li>
+          <li>Contoh skill 3</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h3>Bahasa</h3>
+        <ul>
+          <li>Bahasa Indonesia — Lancar</li>
+          <li>Bahasa Inggris — Menengah</li>
+        </ul>
+      </section>
+    </aside>
+
+    <section class="right-panel">
+      <div class="header-actions">
+        <button id="downloadPdf">Download PDF</button>
+        <button id="toggleTheme">Toggle Tema</button>
+      </div>
+
+      <section class="card">
+        <h2>About Me</h2>
+        <p id="about">Ringkasan singkat tentang diri Anda. Tuliskan 2–3 kalimat yang menjelaskan tujuan, minat, dan keahlian utama.</p>
+      </section>
+
+      <section class="card">
+        <h2>Pendidikan</h2>
+        <div class="timeline">
+          <div class="item">
+            <h4>SMAK Penabur Holis</h4>
+            <span class="date">2026 — sekarang</span>
+            <p>Deskripsi singkat (opsional).</p>
+          </div>
+          <div class="item">
+            <h4>SMPK Penabur Holis</h4>
+            <span class="date">2023 — 2026</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Pengalaman</h2>
+        <div class="timeline">
+          <div class="item">
+            <h4>MPK — Ketua</h4>
+            <span class="date">Kelas 8</span>
+            <p>Deskripsi peran dan pencapaian singkat.</p>
+          </div>
+          <div class="item">
+            <h4>OSIS — Anggota</h4>
+            <span class="date">Kelas 7</span>
+          </div>
+        </div>
+      </section>
+
+      <footer class="card footer">
+        <p>CV dibuat menggunakan template modern. Update konten sesuai kebutuhan.</p>
+      </footer>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(()=>{});
+    }
+  </script>
+</body>
+</html>
