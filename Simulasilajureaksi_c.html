@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Simulasi Laju Reaksi & Tumbukan Efektif</title>
+<style>
+  :root{
+    --bg:#0f172a; --panel:#1e293b; --panel2:#243149; --accent:#38bdf8;
+    --good:#22c55e; --bad:#ef4444; --text:#e2e8f0; --muted:#94a3b8;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; font-family:'Segoe UI',Roboto,Arial,sans-serif;
+    background:linear-gradient(160deg,#0f172a,#1e2a47);
+    color:var(--text); min-height:100vh; padding:16px;
+  }
+  h1{font-size:1.25rem; margin:0 0 4px 0; text-align:center; color:#fff;}
+  .sub{text-align:center; color:var(--muted); font-size:0.85rem; margin-bottom:14px;}
+  .wrap{
+    display:flex; gap:16px; max-width:1180px; margin:0 auto; flex-wrap:wrap;
+  }
+  .panel{
+    background:var(--panel); border-radius:14px; padding:16px;
+    box-shadow:0 4px 18px rgba(0,0,0,0.35);
+  }
+  .controls{flex:1 1 300px; min-width:280px;}
+  .stage{flex:2 1 480px; min-width:300px; display:flex; flex-direction:column; gap:12px;}
+  label{display:block; font-size:0.82rem; color:var(--muted); margin:12px 0 4px;}
+  select, input[type=range]{width:100%;}
+  select{
+    background:var(--panel2); color:var(--text); border:1px solid #334155;
+    border-radius:8px; padding:8px; font-size:0.85rem;
+  }
+  .row{display:flex; gap:10px;}
+  .row > div{flex:1;}
+  .valline{display:flex; justify-content:space-between; font-size:0.78rem; color:var(--muted);}
+  .valline b{color:var(--accent);}
+  .toggle{
+    display:flex; align-items:center; gap:10px; background:var(--panel2);
+    padding:10px 12px; border-radius:10px; margin-top:14px; cursor:pointer;
+    border:1px solid #334155; user-select:none;
+  }
+  .toggle input{width:18px; height:18px;}
+  .toggle.on{border-color:var(--good); box-shadow:0 0 0 1px var(--good) inset;}
+  .btnrow{display:flex; gap:8px; margin-top:16px;}
+  button{
+    flex:1; padding:10px; border:none; border-radius:10px; font-weight:600;
+    cursor:pointer; font-size:0.85rem; transition:transform .1s;
+  }
+  button:active{transform:scale(0.96);}
+  .btn-primary{background:var(--accent); color:#031627;}
+  .btn-secondary{background:var(--panel2); color:var(--text); border:1px solid #334155;}
+  canvas{background:#0b1224; border-radius:12px; display:block; width:100%; touch-action:none;}
+  #stageCanvas{border:1px solid #24304a;}
+  .legend{display:flex; gap:14px; flex-wrap:wrap; font-size:0.78rem; color:var(--muted);}
+  .legend span{display:inline-flex; align-items:center; gap:6px;}
+  .dot{width:10px; height:10px; border-radius:50%; display:inline-block;}
+  .stats{display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;}
+  .stat{
+    background:var(--panel2); border-radius:10px; padding:10px; text-align:center;
+  }
+  .stat .num{font-size:1.25rem; font-weight:700;}
+  .stat .lab{font-size:0.7rem; color:var(--muted); margin-top:2px;}
+  .good{color:var(--good);} .bad{color:var(--bad);} .accent{color:var(--accent);}
+  .eabar{
+    height:10px; background:#334155; border-radius:6px; overflow:hidden; margin-top:4px;
+  }
+  .eabar > div{height:100%; background:linear-gradient(90deg,var(--bad),#f59e0b); transition:width .3s;}
+  #chart{height:110px;}
+</style>
+</head>
+<body>
+  <h1>⚗️ Simulasi Laju Reaksi: Tumbukan Efektif</h1>
+  <div class="sub">Pilih zat, atur konsentrasi/suhu/luas permukaan, dan tambahkan katalis untuk melihat pengaruhnya terhadap laju reaksi</div>
+
+  <div class="wrap">
+    <div class="panel controls">
+      <label>Zat A (partikel biru)</label>
+      <select id="zatA">
+        <option value="Na">Na (Natrium)</option>
+        <option value="Zn">Zn (Serbuk Seng)</option>
+        <option value="Mg">Mg (Pita Magnesium)</option>
+        <option value="H2">H₂ (Gas Hidrogen)</option>
+        <option value="CaCO3">CaCO₃ (Kalsium Karbonat)</option>
+      </select>
+
+      <label>Zat B (partikel oranye)</label>
+      <select id="zatB">
+        <option value="HCl">HCl (Asam Klorida)</option>
+        <option value="O2">O₂ (Gas Oksigen)</option>
+        <option value="H2SO4">H₂SO₄ (Asam Sulfat)</option>
+        <option value="Cl2">Cl₂ (Gas Klorin)</option>
+      </select>
+
+      <div class="row">
+        <div>
+          <label>Konsentrasi A <span class="valline"><b id="valA"></b></span></label>
+          <input type="range" id="jumlahA" min="4" max="24" value="12">
+        </div>
+        <div>
+          <label>Konsentrasi B <span class="valline"><b id="valB"></b></span></label>
+          <input type="range" id="jumlahB" min="4" max="24" value="12">
+        </div>
+      </div>
+
+      <label>Suhu (mempengaruhi energi kinetik) <span class="valline"><b id="valSuhu"></b></span></label>
+      <input type="range" id="suhu" min="10" max="100" value="40">
+
+      <label>Luas Permukaan Partikel (ukuran) <span class="valline"><b id="valLuas"></b></span></label>
+      <input type="range" id="luas" min="6" max="16" value="10">
+
+      <div class="toggle" id="katalisToggle">
+        <input type="checkbox" id="katalis">
+        <div>
+          <div style="font-weight:600;">Tambahkan Katalis</div>
+          <div style="font-size:0.72rem; color:var(--muted);">Menurunkan energi aktivasi (Ea) yang dibutuhkan</div>
+        </div>
+      </div>
+
+      <label style="margin-top:16px;">Energi Aktivasi Saat Ini</label>
+      <div class="eabar"><div id="eaFill" style="width:70%;"></div></div>
+      <div class="valline"><span>Rendah</span><span>Tinggi</span></div>
+
+      <div class="btnrow">
+        <button class="btn-primary" id="startBtn">▶ Mulai</button>
+        <button class="btn-secondary" id="resetBtn">⟳ Reset</button>
+      </div>
+    </div>
+
+    <div class="panel stage">
+      <div class="legend">
+        <span><i class="dot" style="background:#38bdf8;"></i> Zat A</span>
+        <span><i class="dot" style="background:#f97316;"></i> Zat B</span>
+        <span><i class="dot" style="background:#22c55e;"></i> Produk (tumbukan efektif)</span>
+        <span><i class="dot" style="background:#64748b;"></i> Tumbukan tidak efektif</span>
+      </div>
+      <canvas id="stageCanvas" width="700" height="380"></canvas>
+
+      <div class="stats">
+        <div class="stat"><div class="num accent" id="statTotal">0</div><div class="lab">Total Tumbukan</div></div>
+        <div class="stat"><div class="num good" id="statEfektif">0</div><div class="lab">Tumbukan Efektif</div></div>
+        <div class="stat"><div class="num bad" id="statGagal">0</div><div class="lab">Tidak Efektif</div></div>
+      </div>
+      <div class="stat" style="text-align:center;">
+        <div class="num accent" id="statRate">0.00</div>
+        <div class="lab">Laju Reaksi (produk / detik)</div>
+      </div>
+
+      <label style="margin:0;">Grafik Laju Reaksi (kumulatif produk terhadap waktu)</label>
+      <canvas id="chart" width="700" height="110"></canvas>
+    </div>
+  </div>
+
+<script>
+const canvas = document.getElementById('stageCanvas');
+const ctx = canvas.getContext('2d');
+const chartCv = document.getElementById('chart');
+const chartCtx = chartCv.getContext('2d');
+
+function resizeCanvases(){
+  const w = canvas.parentElement.clientWidth;
+  canvas.width = w; canvas.height = Math.max(300, w*0.54);
+  chartCv.width = w; chartCv.height = 110;
+}
+window.addEventListener('resize', resizeCanvases);
+
+const jumlahAEl = document.getElementById('jumlahA');
+const jumlahBEl = document.getElementById('jumlahB');
+const suhuEl = document.getElementById('suhu');
+const luasEl = document.getElementById('luas');
+const katalisEl = document.getElementById('katalis');
+const katalisToggle = document.getElementById('katalisToggle');
+const zatAEl = document.getElementById('zatA');
+const zatBEl = document.getElementById('zatB');
+const eaFill = document.getElementById('eaFill');
+
+const valA = document.getElementById('valA');
+const valB = document.getElementById('valB');
+const valSuhu = document.getElementById('valSuhu');
+const valLuas = document.getElementById('valLuas');
+
+let particles = [];
+let running = false;
+let totalCollisions = 0, effectiveCollisions = 0, failedCollisions = 0;
+let history = []; // {t, cumulative}
+let startTime = null;
+let popEffects = [];
+
+function baseEa(){
+  // energi aktivasi dasar, diturunkan jika ada katalis
+  const withoutCatalyst = 55;
+  return katalisEl.checked ? withoutCatalyst * 0.45 : withoutCatalyst;
+}
+
+function updateLabels(){
+  valA.textContent = jumlahAEl.value;
+  valB.textContent = jumlahBEl.value;
+  valSuhu.textContent = suhuEl.value + ' °C (relatif)';
+  valLuas.textContent = luasEl.value + ' px (radius)';
+  eaFill.style.width = Math.min(100, baseEa()) + '%';
+  katalisToggle.classList.toggle('on', katalisEl.checked);
+}
+
+function speedFromTemp(){
+  const t = parseInt(suhuEl.value,10);
+  return 0.6 + (t/100)*3.2;
+}
+
+function makeParticle(type){
+  const r = parseInt(luasEl.value,10);
+  const spd = speedFromTemp();
+  const angle = Math.random()*Math.PI*2;
+  return {
+    type, r,
+    x: r + Math.random()*(canvas.width-2*r),
+    y: r + Math.random()*(canvas.height-2*r),
+    vx: Math.cos(angle)*spd*(0.6+Math.random()*0.8),
+    vy: Math.sin(angle)*spd*(0.6+Math.random()*0.8),
+    alive:true
+  };
+}
+
+function initParticles(){
+  particles = [];
+  const nA = parseInt(jumlahAEl.value,10);
+  const nB = parseInt(jumlahBEl.value,10);
+  for(let i=0;i<nA;i++) particles.push(makeParticle('A'));
+  for(let i=0;i<nB;i++) particles.push(makeParticle('B'));
+  totalCollisions=0; effectiveCollisions=0; failedCollisions=0;
+  history=[]; startTime=null; popEffects=[];
+  updateStats();
+  drawStatic();
+}
+
+function colorFor(type){
+  if(type==='A') return '#38bdf8';
+  if(type==='B') return '#f97316';
+  if(type==='product') return '#22c55e';
+  return '#64748b';
+}
+
+function step(dt){
+  // gerak
+  for(const p of particles){
+    if(!p.alive) continue;
+    p.x += p.vx; p.y += p.vy;
+    if(p.x - p.r < 0){ p.x = p.r; p.vx *= -1; }
+    if(p.x + p.r > canvas.width){ p.x = canvas.width - p.r; p.vx *= -1; }
+    if(p.y - p.r < 0){ p.y = p.r; p.vy *= -1; }
+    if(p.y + p.r > canvas.height){ p.y = canvas.height - p.r; p.vy *= -1; }
+  }
+
+  // tumbukan A-B
+  for(let i=0;i<particles.length;i++){
+    const p1 = particles[i];
+    if(!p1.alive || p1.type==='product') continue;
+    for(let j=i+1;j<particles.length;j++){
+      const p2 = particles[j];
+      if(!p2.alive || p2.type==='product') continue;
+      if(p1.type===p2.type) continue; // hanya A-B yang bereaksi
+      const dx=p1.x-p2.x, dy=p1.y-p2.y;
+      const dist = Math.sqrt(dx*dx+dy*dy);
+      if(dist < p1.r+p2.r){
+        totalCollisions++;
+        const speedEnergy = (p1.vx*p1.vx+p1.vy*p1.vy) + (p2.vx*p2.vx+p2.vy*p2.vy);
+        const orientation = Math.random(); // faktor arah tumbukan
+        const energyScore = speedEnergy*8*orientation;
+        if(energyScore >= baseEa()){
+          // tumbukan efektif -> jadi produk
+          effectiveCollisions++;
+          p1.type='product'; p2.type='product';
+          p1.vx*=0.4; p1.vy*=0.4; p2.vx*=0.4; p2.vy*=0.4;
+          popEffects.push({x:(p1.x+p2.x)/2, y:(p1.y+p2.y)/2, life:20});
+          if(startTime===null) startTime = performance.now();
+          history.push({t:(performance.now()-(startTime||performance.now()))/1000, cum:effectiveCollisions});
+        } else {
+          failedCollisions++;
+          // pantul menjauh (elastis sederhana)
+          const nx=dx/dist, ny=dy/dist;
+          p1.vx += nx*0.6; p1.vy += ny*0.6;
+          p2.vx -= nx*0.6; p2.vy -= ny*0.6;
+          popEffects.push({x:(p1.x+p2.x)/2, y:(p1.y+p2.y)/2, life:12, fail:true});
+        }
+      }
+    }
+  }
+}
+
+function draw(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  for(const p of particles){
+    ctx.beginPath();
+    ctx.fillStyle = colorFor(p.type);
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fill();
+  }
+  popEffects.forEach(e=>{
+    ctx.beginPath();
+    ctx.strokeStyle = e.fail ? 'rgba(148,163,184,0.6)' : 'rgba(34,197,94,0.8)';
+    ctx.lineWidth=2;
+    ctx.arc(e.x,e.y, (20-e.life)*1.5, 0, Math.PI*2);
+    ctx.stroke();
+    e.life--;
+  });
+  popEffects = popEffects.filter(e=>e.life>0);
+}
+
+function drawStatic(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  for(const p of particles){
+    ctx.beginPath();
+    ctx.fillStyle = colorFor(p.type);
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fill();
+  }
+}
+
+function drawChart(){
+  chartCtx.clearRect(0,0,chartCv.width,chartCv.height);
+  chartCtx.strokeStyle='#334155';
+  chartCtx.strokeRect(0,0,chartCv.width,chartCv.height);
+  if(history.length<2) return;
+  const maxT = history[history.length-1].t || 1;
+  const maxC = history[history.length-1].cum || 1;
+  chartCtx.beginPath();
+  chartCtx.strokeStyle='#22c55e';
+  chartCtx.lineWidth=2;
+  history.forEach((h,idx)=>{
+    const x = (h.t/maxT)*(chartCv.width-10)+5;
+    const y = chartCv.height-8 - (h.cum/maxC)*(chartCv.height-18);
+    if(idx===0) chartCtx.moveTo(x,y); else chartCtx.lineTo(x,y);
+  });
+  chartCtx.stroke();
+}
+
+function updateStats(){
+  document.getElementById('statTotal').textContent = totalCollisions;
+  document.getElementById('statEfektif').textContent = effectiveCollisions;
+  document.getElementById('statGagal').textContent = failedCollisions;
+  let rate = 0;
+  if(startTime!==null){
+    const elapsed = (performance.now()-startTime)/1000;
+    if(elapsed>0.3) rate = effectiveCollisions/elapsed;
+  }
+  document.getElementById('statRate').textContent = rate.toFixed(2);
+  drawChart();
+}
+
+let lastFrame=0;
+function loop(ts){
+  if(!running) return;
+  step();
+  draw();
+  updateStats();
+  requestAnimationFrame(loop);
+}
+
+document.getElementById('startBtn').addEventListener('click', ()=>{
+  running = !running;
+  document.getElementById('startBtn').textContent = running ? '⏸ Jeda' : '▶ Mulai';
+  if(running) requestAnimationFrame(loop);
+});
+
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  running=false;
+  document.getElementById('startBtn').textContent='▶ Mulai';
+  initParticles();
+});
+
+[jumlahAEl,jumlahBEl,suhuEl,luasEl].forEach(el=>{
+  el.addEventListener('input', ()=>{ updateLabels(); if(!running) initParticles(); });
+});
+katalisEl.addEventListener('change', updateLabels);
+[zatAEl,zatBEl].forEach(el=> el.addEventListener('change', ()=>{ if(!running) initParticles(); }));
+
+resizeCanvases();
+updateLabels();
+initParticles();
+</script>
+</body>
+</html>
