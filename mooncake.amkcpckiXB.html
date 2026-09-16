@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kue Bulan · 月饼</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gloock&family=Ma+Shan+Zheng&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E6E1F0; --bg-deep:#D3CAE6; --ink:#231B42; --muted:#5A5378;
+  --gold:#A8680C; --gold-soft:#E8B04B; --cinnabar:#B02E25; --jade:#2F8672;
+  --card:#F5F2FA; --line:rgba(35,27,66,.16); --star-op:.18;
+  --display:"Gloock", Georgia, "Times New Roman", serif;
+  --body:"Outfit", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --brush:"Ma Shan Zheng", "KaiTi", "STKaiti", serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0D1130; --bg-deep:#1D1648; --ink:#F3E9D2; --muted:#B6B0CE;
+    --gold:#E8B04B; --gold-soft:#F4C66B; --cinnabar:#D2433A; --jade:#55B49E;
+    --card:#171C47; --line:rgba(243,233,210,.14); --star-op:1;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0D1130; --bg-deep:#1D1648; --ink:#F3E9D2; --muted:#B6B0CE;
+  --gold:#E8B04B; --gold-soft:#F4C66B; --cinnabar:#D2433A; --jade:#55B49E;
+  --card:#171C47; --line:rgba(243,233,210,.14); --star-op:1;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;min-height:100%}
+body{
+  background:radial-gradient(120% 80% at 50% 0%,var(--bg-deep),var(--bg) 70%) fixed;
+  color:var(--ink);font:400 1.05rem/1.65 var(--body);overflow-x:hidden;
+}
+button{font:inherit;cursor:pointer;color:inherit}
+:focus-visible{outline:3px solid var(--gold-soft);outline-offset:3px}
+h1,h2,h3{font-family:var(--display);font-weight:400;line-height:1.1;margin:0}
+.brush{font-family:var(--brush)}
+
+/* starfield */
+.stars{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:var(--star-op)}
+.stars i{position:absolute;width:2px;height:2px;border-radius:50%;background:#FFF6DD;animation:twinkle var(--d) ease-in-out infinite;animation-delay:var(--dl)}
+@keyframes twinkle{0%,100%{opacity:.2}50%{opacity:1}}
+
+.view{position:relative;z-index:1;min-height:100svh;display:none}
+.view.active{display:block;animation:viewIn .5s ease both}
+@keyframes viewIn{from{opacity:0}to{opacity:1}}
+
+/* buttons */
+.btn{border:0;border-radius:999px;padding:14px 30px;font-weight:600;letter-spacing:.01em;
+  background:linear-gradient(180deg,#F2C375,#D08A33);color:#2A1606;
+  box-shadow:0 8px 24px -8px rgba(232,176,75,.6), inset 0 1px 0 rgba(255,255,255,.5)}
+.btn:hover{filter:brightness(1.06)}
+.btn:active{transform:translateY(1px)}
+.btn.red{background:linear-gradient(180deg,#E0574B,#A92A21);color:#FFF1DA;box-shadow:0 8px 24px -8px rgba(210,67,58,.6), inset 0 1px 0 rgba(255,255,255,.3)}
+.back{display:inline-flex;align-items:center;gap:8px;border:1.5px solid var(--line);background:color-mix(in srgb,var(--card) 60%,transparent);border-radius:999px;padding:9px 18px;font-weight:500;backdrop-filter:blur(6px)}
+.back:hover{border-color:var(--gold)}
+.back svg{width:16px;height:16px}
+
+/* ---------------- HOME ---------------- */
+#home .stage{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 16px 40px;text-align:center}
+.home-title{font-size:clamp(2.4rem,7vw,3.6rem);letter-spacing:-.01em}
+.home-sub{margin:6px 0 0;color:var(--muted)}
+.home-sub .brush{color:var(--gold);font-size:1.3em;margin-right:6px}
+.cake-wrap{position:relative;width:min(460px,94vw);aspect-ratio:1;margin:10px 0 6px}
+.halo{position:absolute;inset:6%;border-radius:50%;background:radial-gradient(circle,rgba(244,198,107,.45),rgba(244,198,107,.12) 45%,transparent 70%);filter:blur(10px);animation:breathe 6s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.06);opacity:1}}
+#cake{position:relative;width:100%;height:100%;overflow:visible;animation:moonrise 1.2s cubic-bezier(.2,.9,.3,1) both}
+@keyframes moonrise{from{transform:translateY(40px) scale(.9);opacity:0}to{transform:none;opacity:1}}
+.q{outline:none}
+.q-move{transition:transform .9s cubic-bezier(.25,1.5,.45,1)}
+.split .q-move{transform:translate(var(--tx),var(--ty))}
+.split .q{cursor:pointer}
+.split .q:hover .q-move,.split .q:focus-visible .q-move{transform:translate(calc(var(--tx)*1.28),calc(var(--ty)*1.28))}
+.q-eat{transform-box:fill-box;transform-origin:center;transition:transform .55s cubic-bezier(.6,-.3,.7,.4),opacity .55s}
+.eaten .q-eat{transform:scale(0) rotate(35deg);opacity:0}
+.q-label{opacity:0;transition:opacity .5s .45s;pointer-events:none}
+.split .q-label{opacity:1}
+.q .pill{fill:rgba(22,14,44,.62);stroke:rgba(244,198,107,.55);stroke-width:1.5;transition:stroke .2s,fill .2s}
+.split .q:hover .pill,.split .q:focus-visible .pill{fill:rgba(160,40,32,.85);stroke:#F4C66B;stroke-width:2.5}
+.core{transform-box:fill-box;transform-origin:center;transform:scale(0);transition:transform .8s .3s cubic-bezier(.3,1.6,.5,1)}
+.split .core{transform:scale(1)}
+.eaten .core{transform:scale(0);transition-delay:.9s}
+.home-actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;min-height:56px}
+.hint{color:var(--muted);font-size:.95rem;margin:14px 0 0;min-height:1.6em}
+.crumb{position:absolute;left:50%;top:50%;width:9px;height:7px;border-radius:40%;background:#C98035;pointer-events:none}
+.cloud{position:absolute;width:160px;opacity:.22;color:var(--gold);pointer-events:none}
+
+/* ---------------- PAGES ---------------- */
+.page{max-width:1080px;margin:0 auto;padding:24px 20px 64px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:28px}
+.page-head{text-align:center;margin:8px auto 36px;max-width:640px}
+.page-head .seal{display:inline-grid;place-items:center;width:62px;height:62px;border-radius:12px;background:var(--cinnabar);color:#FFE9C9;font-family:var(--brush);font-size:1.9rem;line-height:1;transform:rotate(-4deg);margin-bottom:14px;box-shadow:0 10px 30px -10px rgba(176,46,37,.7)}
+.page-head h2{font-size:clamp(2.1rem,5.5vw,3.2rem)}
+.page-head p{color:var(--muted);margin:10px 0 0}
+.bottom-back{display:flex;justify-content:center;margin-top:44px}
+
+/* facts */
+.facts{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px}
+.fact{perspective:1000px;background:none;border:0;padding:0;aspect-ratio:3/4;text-align:left}
+.fact-in{position:relative;width:100%;height:100%;transition:transform .75s cubic-bezier(.3,1.3,.5,1);transform-style:preserve-3d}
+.fact.flipped .fact-in{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:18px;padding:18px;display:flex;flex-direction:column;overflow:hidden}
+.front{background:
+  radial-gradient(circle at 50% 38%,rgba(232,176,75,.18),transparent 60%),var(--card);
+  border:1px solid var(--line)}
+.front .glyph{font-family:var(--brush);font-size:4.6rem;line-height:1;color:var(--gold);text-align:center;margin:18px 0 auto}
+.front h3{font-size:1.18rem;line-height:1.2}
+.front .tap{font-size:.82rem;color:var(--muted);margin-top:6px}
+.back-face{transform:rotateY(180deg);background:linear-gradient(160deg,#B5352B,#7E1F1A);color:#FFF1DA;justify-content:center;font-size:.98rem;line-height:1.55}
+.back-face::after{content:attr(data-g);position:absolute;right:-8px;bottom:-26px;font-family:var(--brush);font-size:7rem;opacity:.12;line-height:1}
+.back-face h3{font-size:1.05rem;color:#F4C66B;margin-bottom:8px}
+
+/* stories */
+.story-wrap{max-width:760px;margin:0 auto}
+.dots{display:flex;justify-content:center;gap:10px;margin-bottom:22px}
+.dots span{width:34px;height:5px;border-radius:5px;background:var(--line);transition:background .3s}
+.dots span.on{background:var(--gold)}
+.story-art{display:grid;place-items:center;margin:0 auto 18px;width:150px;height:150px;border-radius:50%;
+  background:radial-gradient(circle at 40% 35%,#FBE2A6,#E8B04B 55%,#B8781E);box-shadow:0 0 60px rgba(244,198,107,.35)}
+.story-art span{font-family:var(--brush);font-size:4.4rem;color:#6E2A14;line-height:1}
+.story-count{text-align:center;color:var(--muted);font-size:.9rem;margin:0}
+.story-title{text-align:center;font-size:clamp(2rem,5vw,2.8rem);margin:4px 0 4px}
+.story-sub{text-align:center;font-family:var(--brush);color:var(--gold);font-size:1.5rem;margin:0 0 26px}
+.story-body p{font-size:1.1rem;line-height:1.85;margin:0 0 18px}
+.story-body p:first-child::first-letter{font-family:var(--display);float:left;font-size:3.4rem;line-height:.9;padding:6px 10px 0 0;color:var(--gold)}
+.quiz{margin-top:34px;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:26px}
+.quiz h3{font-size:1.5rem;margin-bottom:4px}
+.quiz .qmeta{color:var(--muted);font-size:.9rem;margin:0 0 16px}
+.qbar{height:6px;border-radius:6px;background:var(--line);overflow:hidden;margin-bottom:18px}
+.qbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--cinnabar));transition:width .4s}
+.qtext{font-size:1.18rem;font-weight:500;margin:0 0 14px}
+.opts{display:grid;gap:10px}
+.opt{text-align:left;border:1.5px solid var(--line);background:transparent;border-radius:14px;padding:12px 16px;transition:border-color .2s,background .2s}
+.opt:hover:not(:disabled){border-color:var(--gold)}
+.opt:disabled{cursor:default}
+.opt.right{background:var(--jade);border-color:var(--jade);color:#fff}
+.opt.wrong{background:var(--cinnabar);border-color:var(--cinnabar);color:#fff}
+.qfeed{min-height:1.6em;margin:14px 0 10px;color:var(--muted)}
+.qresult{text-align:center;padding:10px 0}
+.qresult .big{font-family:var(--display);font-size:3.4rem;color:var(--gold);line-height:1}
+.story-nav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:30px;flex-wrap:wrap}
+
+/* contest */
+.contest-intro{max-width:620px;margin:0 auto 30px;text-align:center;color:var(--muted)}
+.contest-tabs{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:680px;margin:0 auto}
+.ctab{position:relative;border:1.5px solid var(--line);background:var(--card);border-radius:22px;padding:26px 16px 22px;text-align:center;overflow:hidden;transition:border-color .25s,transform .25s}
+.ctab:hover{border-color:var(--gold);transform:translateY(-2px)}
+.ctab[aria-expanded="true"]{border-color:var(--cinnabar);background:linear-gradient(160deg,#B5352B,#7E1F1A);color:#FFF1DA}
+.ctab .brush{display:block;font-size:2.6rem;line-height:1;color:var(--gold);margin-bottom:10px}
+.ctab[aria-expanded="true"] .brush{color:#F4C66B}
+.ctab strong{font-family:var(--display);font-weight:400;font-size:clamp(1.3rem,4vw,1.8rem)}
+.cpanel{max-width:680px;margin:18px auto 0;border-radius:22px;padding:28px;border:1px dashed var(--gold);
+  background:radial-gradient(circle at 90% 10%,rgba(232,176,75,.16),transparent 50%),var(--card);animation:drop .45s cubic-bezier(.3,1.3,.5,1) both}
+@keyframes drop{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
+.cpanel h3{font-size:1.6rem;margin-bottom:8px}
+.cpanel p{margin:0;font-size:1.15rem}
+.cpanel .place{display:flex;align-items:center;gap:8px;margin-top:14px;color:var(--muted);font-size:.98rem}
+
+/* lantern */
+#lantern{background:linear-gradient(180deg,#05071C 0%,#141040 45%,#3A1C4E 80%,#5B2A4A 100%);color:#F3E9D2;overflow:hidden}
+#lantern .stars{position:absolute;opacity:1}
+.moon{position:absolute;top:9%;right:10%;width:clamp(80px,14vw,140px);aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(circle at 38% 35%,#FFF6DA,#F6D98E 55%,#D9A84E);box-shadow:0 0 80px 20px rgba(246,217,142,.35),0 0 220px 60px rgba(246,217,142,.12)}
+.mountains{position:absolute;left:0;right:0;bottom:0;width:100%;height:32vh;pointer-events:none}
+.sky-hint-btn{border:0;background:none;color:#F6D98E;text-decoration:underline;text-underline-offset:4px;margin-top:14px;font-size:.95rem}
+#lantern.sky-mode{background:linear-gradient(180deg,#02030F 0%,#070925 40%,#0E0B2E 100%)}
+#lantern.sky-mode .moon,#lantern.sky-mode .mountains{display:none}
+#skyScreen{position:relative;z-index:3;min-height:100svh;display:flex;flex-direction:column}
+.sky-bar{position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 20px;background:linear-gradient(180deg,rgba(2,3,15,.92),rgba(2,3,15,0))}
+.sky-bar .counter b{font-size:clamp(1.6rem,5vw,2.3rem)}
+.sky-head{text-align:center;padding:4px 20px 8px}
+.sky-head h2{font-size:clamp(2rem,6vw,3rem)}
+.sky-head .brush{color:#F6D98E;font-size:1.5rem;margin:2px 0 0}
+.sky-head p{color:#CFC6E4;margin:6px auto 0;max-width:44ch}
+.sky-moon{width:70px;height:70px;border-radius:50%;margin:0 auto 12px;background:radial-gradient(circle at 38% 35%,#FFF6DA,#F6D98E 55%,#D9A84E);box-shadow:0 0 60px 14px rgba(246,217,142,.3)}
+.sky-grid{flex:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:28px 18px;padding:30px 20px 140px;max-width:1100px;width:100%;margin:0 auto;align-content:start}
+.sky-empty{text-align:center;color:#CFC6E4;padding:40px 20px}
+.sl{position:relative;border:0;background:none;padding:0;margin-top:var(--off);display:flex;flex-direction:column;align-items:center;animation:hover var(--bd) ease-in-out var(--dl) infinite alternate;color:#3A0C06}
+@keyframes hover{from{transform:translateY(0) rotate(-2.5deg)}to{transform:translateY(-14px) rotate(2.5deg)}}
+.sl .cap{width:46%;height:9px;border-radius:4px 4px 1px 1px;background:linear-gradient(180deg,#F4C66B,#A86B1A)}
+.sl .cap.b{border-radius:1px 1px 4px 4px}
+.sl .bd{width:100%;aspect-ratio:1/1.12;border-radius:46% 46% 40% 40%/40% 40% 34% 34%;display:grid;place-items:center;padding:16% 13%;
+  background:repeating-linear-gradient(90deg,transparent 0 18%,rgba(90,10,10,.22) 18% 19.5%),radial-gradient(circle at 50% 55%,#FFE09A 0%,#F2803A 42%,#B8281C 80%,#7A1712 100%);
+  box-shadow:0 0 38px rgba(255,150,60,.5),inset 0 -12px 24px rgba(80,5,5,.35);filter:hue-rotate(var(--hue))}
+.sl .tx{font-size:.8rem;line-height:1.3;font-weight:500;text-align:center;overflow:hidden;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;word-break:break-word}
+.sl .ts{width:2px;height:16px;background:linear-gradient(#F4C66B,#B8281C)}
+.sl .ts::after{content:"";display:block;width:9px;height:12px;margin:14px 0 0 -3.5px;border-radius:2px 2px 5px 5px;background:#B8281C}
+.sl.mine .bd{box-shadow:0 0 0 3px #F6D98E,0 0 60px rgba(255,200,90,.85),inset 0 -12px 24px rgba(80,5,5,.35)}
+.sl .tag{position:absolute;top:-22px;font-size:.72rem;color:#F6D98E;white-space:nowrap}
+.sl.arrive{animation:arrive 1.4s cubic-bezier(.3,1.4,.5,1) both,hover var(--bd) ease-in-out 1.4s infinite alternate}
+@keyframes arrive{0%{opacity:0;transform:scale(.3);filter:brightness(2.2)}60%{opacity:1;filter:brightness(1.6)}100%{opacity:1;transform:none;filter:none}}
+.sky-foot{position:fixed;left:0;right:0;bottom:0;z-index:6;display:flex;justify-content:center;padding:18px 16px calc(18px + env(safe-area-inset-bottom));background:linear-gradient(0deg,rgba(2,3,15,.95),rgba(2,3,15,0))}
+@media (max-width:520px){.sky-grid{grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:24px 12px;padding:24px 14px 130px}.sl .tx{font-size:.7rem}}
+.lantern-top{position:relative;z-index:3;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:18px 20px}
+#lantern .back{color:#F3E9D2;border-color:rgba(243,233,210,.25);background:rgba(10,8,30,.4)}
+.counter{text-align:right}
+.counter b{display:block;font-family:var(--display);font-weight:400;font-size:clamp(2rem,6vw,3rem);line-height:1;color:#F6D98E}
+.counter span{font-size:.9rem;color:#CFC6E4}
+.lantern-stage{position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;padding:0 16px 40px;min-height:calc(100svh - 96px);justify-content:flex-end}
+.lantern-stage h2{font-size:clamp(1.8rem,5vw,2.6rem);text-align:center}
+.lantern-stage > p{color:#CFC6E4;text-align:center;margin:6px 0 18px;max-width:40ch}
+.big-lantern{position:relative;width:min(240px,62vw);margin:10px 0 22px}
+.bl-cap{height:18px;margin:0 22%;border-radius:6px 6px 2px 2px;background:linear-gradient(180deg,#F4C66B,#A86B1A)}
+.bl-cap.bottom{border-radius:2px 2px 6px 6px}
+.bl-body{position:relative;aspect-ratio:1/1.08;border-radius:46% 46% 40% 40%/40% 40% 34% 34%;
+  background:repeating-linear-gradient(90deg,rgba(0,0,0,.0) 0 18%,rgba(90,10,10,.25) 18% 19%),radial-gradient(circle at 50% 55%,#FFD98A 0%,#F2803A 40%,#B8281C 78%,#7A1712 100%);
+  box-shadow:0 0 70px rgba(255,150,60,.55),inset 0 -20px 40px rgba(80,5,5,.35);display:grid;place-items:center;padding:16%}
+.bl-body textarea{width:100%;height:100%;resize:none;border:0;background:transparent;text-align:center;color:#3A0C06;font:500 1.08rem/1.35 var(--body);outline:none;display:flex}
+.bl-body textarea::placeholder{color:rgba(58,12,6,.6)}
+.bl-body:focus-within{box-shadow:0 0 90px rgba(255,170,70,.8),0 0 0 3px #F6D98E,inset 0 -20px 40px rgba(80,5,5,.35)}
+.bl-tassel{width:3px;height:36px;margin:0 auto;background:linear-gradient(#F4C66B,#B8281C);position:relative}
+.bl-tassel::after{content:"";position:absolute;left:-7px;bottom:-14px;width:17px;height:22px;border-radius:3px 3px 8px 8px;background:#B8281C}
+.bl-glyph{position:absolute;top:10%;left:50%;transform:translateX(-50%);font-family:var(--brush);font-size:1.5rem;color:rgba(58,12,6,.55);pointer-events:none}
+.flying{position:fixed;z-index:30;pointer-events:none}
+.status{min-height:1.5em;color:#CFC6E4;font-size:.9rem;margin-top:10px;text-align:center}
+
+/* toast */
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);z-index:60;background:rgba(20,14,44,.92);color:#F3E9D2;border:1px solid rgba(244,198,107,.4);padding:12px 20px;border-radius:14px;max-width:88vw;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* modal */
+.modal{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:20px;background:rgba(6,6,24,.7);backdrop-filter:blur(8px);animation:viewIn .3s both}
+.dialog{position:relative;width:min(440px,100%);max-height:92svh;overflow:auto;border-radius:28px;padding:30px 26px 26px;text-align:center;color:#F3E9D2;
+  background:radial-gradient(circle at 50% 0%,rgba(244,198,107,.28),transparent 55%),linear-gradient(180deg,#221A55,#120F33);border:1px solid rgba(244,198,107,.35);
+  animation:pop .6s cubic-bezier(.3,1.5,.5,1) both}
+@keyframes pop{from{transform:scale(.7) translateY(30px);opacity:0}to{transform:none;opacity:1}}
+.dialog .got{margin:0;color:#CFC6E4;font-size:.95rem}
+.flavor-art{width:190px;height:190px;margin:12px auto 6px;display:block;animation:spinIn 1s cubic-bezier(.3,1.3,.5,1) both}
+@keyframes spinIn{from{transform:rotate(-120deg) scale(.4)}to{transform:none}}
+.dialog h3{font-size:2.2rem}
+.dialog .fz{font-family:var(--brush);color:#F4C66B;font-size:1.7rem;margin:2px 0 14px}
+.dialog blockquote{margin:0 0 12px;font-family:var(--display);font-size:1.5rem;line-height:1.25;color:#FFE3A6}
+.dialog .makna{margin:0 0 22px;color:#DCD4EE;line-height:1.65}
+.close-x{position:absolute;top:12px;right:12px;width:38px;height:38px;border-radius:50%;border:1px solid rgba(243,233,210,.25);background:transparent;color:#F3E9D2;font-size:1.3rem;line-height:1}
+
+@media (max-width:520px){
+  .facts{grid-template-columns:1fr 1fr;gap:10px}
+  .front .glyph{font-size:3.4rem;margin-top:8px}
+  .front h3{font-size:1rem}
+  .back-face{font-size:.86rem;padding:14px;line-height:1.45}
+  .back-face h3{font-size:.92rem}
+  .quiz{padding:20px 16px}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01s!important;animation-iteration-count:1!important;transition-duration:.01s!important}
+}
+</style>
+</head>
+<body>
+<div class="stars" id="stars" aria-hidden="true"></div>
+
+<!-- ============ HOME ============ -->
+<main id="home" class="view active">
+  <svg class="cloud" style="top:8%;left:4%" viewBox="0 0 160 70" aria-hidden="true"><path d="M8 58h120M30 58c-14 0-18-20-4-24 2-16 26-18 32-4 8-14 32-10 32 8 14-2 20 16 8 20M56 40c0-8 10-8 10-1 0 4-6 5-6 1" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+  <svg class="cloud" style="bottom:10%;right:4%;transform:scaleX(-1)" viewBox="0 0 160 70" aria-hidden="true"><path d="M8 58h120M30 58c-14 0-18-20-4-24 2-16 26-18 32-4 8-14 32-10 32 8 14-2 20 16 8 20M56 40c0-8 10-8 10-1 0 4-6 5-6 1" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+  <div class="stage">
+    <h1 class="home-title">Kue Bulan</h1>
+    <p class="home-sub"><span class="brush">中秋快乐</span>Selamat Festival Pertengahan Musim Gugur</p>
+    <div class="cake-wrap" id="cakeWrap">
+      <div class="halo" aria-hidden="true"></div>
+      <svg id="cake" viewBox="-240 -240 480 480" role="group" aria-label="Mooncake"></svg>
+    </div>
+    <div class="home-actions">
+      <button class="btn" id="splitBtn">Belah mooncake</button>
+      <button class="btn red" id="eatBtn" hidden>Makan mooncake</button>
+    </div>
+    <p class="hint" id="hint" aria-live="polite"></p>
+  </div>
+</main>
+
+<!-- ============ FUN FACT ============ -->
+<section id="facts" class="view" aria-labelledby="factsTitle">
+  <div class="page">
+    <div class="topbar"><button class="back" data-back>Back</button></div>
+    <div class="page-head">
+      <div class="seal">趣闻</div>
+      <h2 id="factsTitle">10 Fun Fact Mooncake</h2>
+      <p>Ketuk kartu untuk membaliknya.</p>
+    </div>
+    <div class="facts" id="factGrid"></div>
+    <div class="bottom-back"><button class="back" data-back>Back</button></div>
+  </div>
+</section>
+
+<!-- ============ STORIES ============ -->
+<section id="stories" class="view" aria-labelledby="storyTitle">
+  <div class="page">
+    <div class="topbar"><button class="back" data-back>Back</button></div>
+    <div class="story-wrap">
+      <div class="dots" id="storyDots" aria-hidden="true"></div>
+      <div class="story-art" aria-hidden="true"><span id="storyGlyph"></span></div>
+      <p class="story-count" id="storyCount"></p>
+      <h2 class="story-title" id="storyTitle"></h2>
+      <p class="story-sub" id="storySub"></p>
+      <div class="story-body" id="storyBody"></div>
+
+      <div class="quiz" id="quiz">
+        <h3>Kuis kisah ini</h3>
+        <p class="qmeta" id="qMeta"></p>
+        <div class="qbar"><i id="qBar"></i></div>
+        <div id="qArea"></div>
+      </div>
+
+      <div class="story-nav">
+        <button class="back" data-back>Back</button>
+        <button class="btn" id="nextStory">Selanjutnya</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTEST ============ -->
+<section id="contest" class="view" aria-labelledby="contestTitle">
+  <div class="page">
+    <div class="topbar"><button class="back" data-back>Back</button></div>
+    <div class="page-head">
+      <div class="seal">比赛</div>
+      <h2 id="contestTitle">Lomba Festival Kue Bulan</h2>
+    </div>
+    <p class="contest-intro">Dalam rangka Festival Pertengahan Musim Gugur, diselenggarakan dua lomba: storytelling dan culinary. Pilih salah satu untuk melihat keterangannya.</p>
+    <div class="contest-tabs">
+      <button class="ctab" aria-expanded="false" aria-controls="cpanel" data-c="story"><span class="brush" aria-hidden="true">讲故事</span><strong>Storytelling</strong></button>
+      <button class="ctab" aria-expanded="false" aria-controls="cpanel" data-c="culinary"><span class="brush" aria-hidden="true">美食</span><strong>Culinary</strong></button>
+    </div>
+    <div class="cpanel" id="cpanel" hidden aria-live="polite"></div>
+    <div class="bottom-back"><button class="back" data-back>Back</button></div>
+  </div>
+</section>
+
+<!-- ============ LANTERN ============ -->
+<section id="lantern" class="view" aria-labelledby="lanternTitle">
+  <div class="stars" id="skyStars" aria-hidden="true"></div>
+  <div class="moon" aria-hidden="true"></div>
+  <svg class="mountains" viewBox="0 0 1440 300" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 190 L140 120 L260 170 L420 80 L560 160 L700 110 L860 175 L1000 95 L1160 160 L1300 115 L1440 150 V300 H0Z" fill="#241640" opacity=".75"/>
+    <path d="M0 240 L180 180 L330 225 L520 160 L700 230 L880 185 L1050 235 L1240 175 L1440 220 V300 H0Z" fill="#170E2C"/>
+  </svg>
+
+  <div id="writeScreen">
+    <div class="lantern-top">
+      <button class="back" data-back>Back</button>
+      <div class="counter" aria-live="polite"><b class="lcount">0</b><span>lentera telah terbang</span></div>
+    </div>
+    <div class="lantern-stage">
+      <h2 id="lanternTitle">Terbangkan Lentera Harapan</h2>
+      <p>Tuliskan harapanmu di lentera, lalu lepaskan ke langit malam bersama lentera orang lain.</p>
+      <form id="lanternForm" style="display:flex;flex-direction:column;align-items:center">
+        <div class="big-lantern" id="bigLantern">
+          <div class="bl-cap"></div>
+          <div class="bl-body">
+            <span class="bl-glyph" aria-hidden="true">愿</span>
+            <label for="wish" style="position:absolute;left:-9999px">Harapanmu</label>
+            <textarea id="wish" maxlength="60" placeholder="Tulis harapanmu di sini..."></textarea>
+          </div>
+          <div class="bl-cap bottom"></div>
+          <div class="bl-tassel"></div>
+        </div>
+        <button class="btn red" type="submit">Terbangkan</button>
+        <button class="sky-hint-btn" type="button" id="seeSky">Lihat langit harapan</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="skyScreen" hidden>
+    <div class="sky-bar">
+      <button class="back" data-back>Back</button>
+      <div class="counter" aria-live="polite"><b class="lcount">0</b><span>lentera telah terbang</span></div>
+    </div>
+    <div class="sky-head">
+      <div class="sky-moon" aria-hidden="true"></div>
+      <h2>Langit Harapan</h2>
+      <p class="brush">千灯万愿</p>
+      <p>Setiap lentera di sini diterbangkan oleh seseorang. Ketuk untuk membaca harapannya.</p>
+    </div>
+    <div class="sky-grid" id="skyGrid" aria-live="polite"></div>
+    <p class="sky-empty" id="skyEmpty">Langit masih sepi. Jadilah yang pertama menerbangkan lentera.</p>
+    <div class="sky-foot"><button class="btn red" id="addLantern">Tambah lentera</button></div>
+  </div>
+</section>
+
+<div class="toast" id="toast" role="status"></div>
+<div id="modalRoot"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const NS="http://www.w3.org/2000/svg";
+const reduced=matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------- stars ---------- */
+function makeStars(el,n){
+  for(let i=0;i<n;i++){
+    const s=document.createElement("i");
+    const size=Math.random()<.15?3:Math.random()<.5?2:1;
+    s.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;width:${size}px;height:${size}px;--d:${2+Math.random()*4}s;--dl:${-Math.random()*5}s`;
+    el.appendChild(s);
+  }
+}
+makeStars($("#stars"),110);
+makeStars($("#skyStars"),160);
+
+/* ---------- toast ---------- */
+let toastT;
+function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("show"),3200);}
+
+/* ---------- views ---------- */
+let current="home";
+function show(id){
+  document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id===id));
+  current=id;window.scrollTo({top:0});
+  if(id==="stories")renderStory();
+}
+document.querySelectorAll("[data-back]").forEach(b=>{
+  b.insertAdjacentHTML("afterbegin",'<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+  b.addEventListener("click",()=>{show("home");setSplit(true);});
+});
+
+/* ---------- mooncake svg ---------- */
+const cake=$("#cake");
+(function build(){
+  const n=16,R=176,b=13;let d="";
+  for(let i=0;i<=n*10;i++){
+    const a=i/(n*10)*Math.PI*2, r=R+b*Math.abs(Math.cos(a*n/2));
+    d+=(i?"L":"M")+(r*Math.cos(a)).toFixed(1)+" "+(r*Math.sin(a)).toFixed(1);
+  }
+  let dots="",petals="";
+  for(let i=0;i<36;i++){const a=i/36*Math.PI*2;dots+=`<circle cx="${(150*Math.cos(a)).toFixed(1)}" cy="${(150*Math.sin(a)).toFixed(1)}" r="3.4"/>`;}
+  for(let i=0;i<8;i++){
+    const p=`<path d="M0 -64 C 26 -84 26 -118 0 -130 C -26 -118 -26 -84 0 -64Z" transform="rotate(${i*45+22.5})"/>`;
+    petals+=p;
+  }
+  const quads=[
+    {go:"facts",sx:-1,sy:-1,label:["Fun Fact"],hz:"趣闻",aria:"Fun fact"},
+    {go:"stories",sx:1,sy:-1,label:["Kisah"],hz:"传说",aria:"Kisah mooncake"},
+    {go:"contest",sx:-1,sy:1,label:["Lomba"],hz:"比赛",aria:"Lomba"},
+    {go:"lantern",sx:1,sy:1,label:["Terbangkan","Lentera Harapan"],hz:"许愿灯",aria:"Terbangkan lentera harapan"}
+  ];
+  let qs="";
+  quads.forEach((q,i)=>{
+    const cx=q.sx*98, cy=q.sy*98, two=q.label.length>1, h=two?92:78, w=two?158:132;
+    const labelText=two
+      ? `<text x="${cx}" y="${cy+12}" text-anchor="middle" font-family="Outfit, sans-serif" font-weight="600" font-size="16.5" fill="#FFF4DC">${q.label[0]}</text>
+         <text x="${cx}" y="${cy+33}" text-anchor="middle" font-family="Outfit, sans-serif" font-weight="600" font-size="16.5" fill="#FFF4DC">${q.label[1]}</text>`
+      : `<text x="${cx}" y="${cy+22}" text-anchor="middle" font-family="Outfit, sans-serif" font-weight="600" font-size="20" fill="#FFF4DC">${q.label[0]}</text>`;
+    qs+=`<g class="q" data-go="${q.go}" role="button" tabindex="-1" aria-label="${q.aria}">
+      <g class="q-move" style="--tx:${q.sx*40}px;--ty:${q.sy*40}px">
+        <g class="q-eat" style="transition-delay:${i*.18}s">
+          <g clip-path="url(#clip${i})"><use href="#cakeTop" filter="url(#shadow)"/></g>
+          <g class="q-label">
+            <rect class="pill" x="${cx-w/2}" y="${cy-h/2}" width="${w}" height="${h}" rx="18"/>
+            <text x="${cx}" y="${cy-(two?14:8)}" text-anchor="middle" font-family="Ma Shan Zheng, KaiTi, serif" font-size="${two?21:23}" fill="#F4C66B">${q.hz}</text>
+            ${labelText}
+          </g>
+        </g>
+      </g>
+    </g>`;
+  });
+  cake.innerHTML=`
+  <defs>
+    <radialGradient id="crust" cx="42%" cy="36%" r="72%">
+      <stop offset="0" stop-color="#F6CF8A"/><stop offset=".5" stop-color="#D99243"/><stop offset="1" stop-color="#9C5820"/>
+    </radialGradient>
+    <radialGradient id="yolkG" cx="40%" cy="38%" r="65%">
+      <stop offset="0" stop-color="#FFF1C2"/><stop offset=".45" stop-color="#F6B53A"/><stop offset="1" stop-color="#D9780C"/>
+    </radialGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="8" stdDeviation="7" flood-color="#1A0A00" flood-opacity=".4"/></filter>
+    <filter id="glow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="10" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    ${[0,1,2,3].map(i=>{const x=i%2?0:-240,y=i<2?-240:0;return `<clipPath id="clip${i}"><rect x="${x}" y="${y}" width="240" height="240"/></clipPath>`}).join("")}
+    <g id="cakeTop">
+      <path d="${d}Z" fill="url(#crust)" stroke="#86491A" stroke-width="3"/>
+      <circle r="136" fill="none" stroke="#86491A" stroke-width="5" opacity=".5"/>
+      <circle r="136" fill="none" stroke="#FBE0A8" stroke-width="2" opacity=".55" transform="translate(-2 -2)"/>
+      <g fill="#86491A" opacity=".5">${dots}</g>
+      <g fill="none" stroke="#86491A" stroke-width="5" opacity=".45">${petals}</g>
+      <g fill="none" stroke="#FBE0A8" stroke-width="2" opacity=".5" transform="translate(-1.5 -1.5)">${petals}</g>
+      <rect x="-46" y="-58" width="92" height="116" rx="14" fill="#B26C2A" opacity=".45" stroke="#86491A" stroke-width="3"/>
+      <text x="1.5" y="-4" text-anchor="middle" font-family="Ma Shan Zheng, KaiTi, serif" font-size="50" fill="#6E3A12" opacity=".6">中</text>
+      <text x="1.5" y="48" text-anchor="middle" font-family="Ma Shan Zheng, KaiTi, serif" font-size="50" fill="#6E3A12" opacity=".6">秋</text>
+      <text x="-1" y="-6" text-anchor="middle" font-family="Ma Shan Zheng, KaiTi, serif" font-size="50" fill="#FFE7B8">中</text>
+      <text x="-1" y="46" text-anchor="middle" font-family="Ma Shan Zheng, KaiTi, serif" font-size="50" fill="#FFE7B8">秋</text>
+    </g>
+  </defs>
+  <circle class="core" r="34" fill="url(#yolkG)" filter="url(#glow)"/>
+  ${qs}`;
+})();
+
+let isSplit=false;
+function setSplit(on){
+  isSplit=on;
+  cake.classList.toggle("split",on);
+  cake.classList.remove("eaten");
+  $("#splitBtn").hidden=on;
+  $("#eatBtn").hidden=!on;
+  $("#hint").textContent=on?"Ketuk salah satu potongan untuk menjelajah.":"";
+  cake.querySelectorAll(".q").forEach(q=>q.setAttribute("tabindex",on?"0":"-1"));
+}
+$("#splitBtn").onclick=()=>{setSplit(true);setTimeout(()=>cake.querySelector(".q")?.focus({preventScroll:true}),900);};
+cake.querySelectorAll(".q").forEach(q=>{
+  const go=()=>{if(isSplit&&!cake.classList.contains("eaten"))show(q.dataset.go);};
+  q.addEventListener("click",go);
+  q.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go();}});
+});
+
+/* ---------- eat + flavor popup ---------- */
+const flavors=[
+  {name:"Biji Teratai",hz:"莲蓉",skin:"#C98035",paste:"#DDB46E",yolk:true,
+   pesan:"Hati yang tulus",
+   makna:"Teratai tumbuh dari lumpur, tapi bunganya mekar tetap bersih. Semoga kamu selalu tulus dan baik hati, apa pun keadaan di sekitarmu. Kuning telur di tengahnya adalah bulan purnama: tanda harapan yang utuh."},
+  {name:"Kacang Merah",hz:"豆沙",skin:"#C98035",paste:"#5E2320",yolk:false,
+   pesan:"Rindu yang hangat",
+   makna:"Dalam budaya Tionghoa, kacang merah melambangkan kasih sayang dan kerinduan. Ada orang yang sedang memikirkanmu. Malam ini saat yang pas untuk menyapa orang-orang tersayang."},
+  {name:"Durian",hz:"榴莲",skin:"#C98035",paste:"#EBCF5C",yolk:false,
+   pesan:"Berani tampil beda",
+   makna:"Kulitnya berduri, isinya manis dan lembut. Hal yang tampak sulit sering menyimpan sesuatu yang terbaik. Jangan ragu mencoba hal baru."},
+  {name:"Kulit Salju",hz:"冰皮",skin:"#F7EEF2",paste:"#F2C9D6",yolk:true,
+   pesan:"Tenang dan jernih",
+   makna:"Kulitnya lembut, sejuk, dan tidak dipanggang. Kamu mendapat ketenangan: hadapi hari-harimu dengan kepala dingin dan hati yang ringan."},
+  {name:"Lima Biji",hz:"五仁",skin:"#C98035",paste:"#9A7447",yolk:false,nuts:true,
+   pesan:"Bersama lebih kuat",
+   makna:"Lima jenis biji yang berbeda menyatu dalam satu kue. Perbedaan justru membuat keluarga dan persahabatan terasa lengkap."}
+];
+function flavorSVG(f){
+  let nuts="";
+  if(f.nuts){
+    const cols=["#E9D9B0","#6B4A2A","#C9A56A","#F1E6C8","#4E3420"];
+    for(let i=0;i<34;i++){const a=Math.random()*Math.PI*2,r=Math.sqrt(Math.random())*62;
+      nuts+=`<ellipse cx="${(r*Math.cos(a)).toFixed(1)}" cy="${(r*Math.sin(a)).toFixed(1)}" rx="${3+Math.random()*4}" ry="${2+Math.random()*3}" fill="${cols[i%5]}" transform="rotate(${Math.random()*180} ${(r*Math.cos(a)).toFixed(1)} ${(r*Math.sin(a)).toFixed(1)})"/>`;}
+  }
+  if(f.name==="Durian"){for(let i=0;i<14;i++){const a=Math.random()*Math.PI*2,r=Math.random()*55;nuts+=`<circle cx="${(r*Math.cos(a)).toFixed(1)}" cy="${(r*Math.sin(a)).toFixed(1)}" r="${4+Math.random()*6}" fill="#F6E08A" opacity=".7"/>`;}}
+  return `<svg class="flavor-art" viewBox="-100 -100 200 200" aria-hidden="true">
+    <defs><radialGradient id="fy" cx="40%" cy="38%" r="65%"><stop offset="0" stop-color="#FFF1C2"/><stop offset=".5" stop-color="#F6B53A"/><stop offset="1" stop-color="#D9780C"/></radialGradient></defs>
+    <circle r="96" fill="rgba(244,198,107,.18)"/>
+    <circle r="86" fill="${f.skin}"/>
+    <circle r="86" fill="none" stroke="rgba(0,0,0,.18)" stroke-width="2"/>
+    <circle r="74" fill="${f.paste}"/>
+    ${nuts}
+    ${f.yolk?`<circle r="30" fill="url(#fy)"/>`:""}
+  </svg>`;
+}
+function openFlavor(){
+  const f=flavors[Math.floor(Math.random()*flavors.length)];
+  const root=$("#modalRoot");
+  root.innerHTML=`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="flvName">
+    <div class="dialog">
+      <button class="close-x" aria-label="Tutup">×</button>
+      <p class="got">Kamu mendapat rasa</p>
+      ${flavorSVG(f)}
+      <h3 id="flvName">${f.name}</h3>
+      <p class="fz">${f.hz}</p>
+      <blockquote>“${f.pesan}”</blockquote>
+      <p class="makna">${f.makna}</p>
+      <button class="btn" id="againBtn">Ambil mooncake baru</button>
+    </div></div>`;
+  const close=()=>{root.innerHTML="";setSplit(false);cake.style.animation="none";void cake.offsetWidth;cake.style.animation="";$("#splitBtn").focus();document.removeEventListener("keydown",esc);};
+  const esc=e=>{if(e.key==="Escape")close();};
+  document.addEventListener("keydown",esc);
+  root.querySelector(".close-x").onclick=close;
+  root.querySelector("#againBtn").onclick=close;
+  root.querySelector(".modal").onclick=e=>{if(e.target.classList.contains("modal"))close();};
+  root.querySelector("#againBtn").focus();
+}
+function crumbs(){
+  if(reduced)return;
+  const wrap=$("#cakeWrap");
+  for(let i=0;i<26;i++){
+    const c=document.createElement("span");c.className="crumb";
+    c.style.background=["#C98035","#E3A55A","#F6B53A","#8E5220"][i%4];
+    wrap.appendChild(c);
+    const a=Math.random()*Math.PI*2,dist=120+Math.random()*120;
+    c.animate([{transform:"translate(-50%,-50%) scale(1)",opacity:1},{transform:`translate(calc(-50% + ${Math.cos(a)*dist}px), calc(-50% + ${Math.sin(a)*dist+80}px)) rotate(${Math.random()*360}deg) scale(.4)`,opacity:0}],{duration:900+Math.random()*500,delay:Math.random()*700,easing:"cubic-bezier(.2,.7,.4,1)",fill:"forwards"}).onfinish=()=>c.remove();
+  }
+}
+$("#eatBtn").onclick=()=>{
+  cake.classList.add("eaten");
+  $("#eatBtn").hidden=true;$("#hint").textContent="Nyam...";
+  cake.querySelectorAll(".q").forEach(q=>q.setAttribute("tabindex","-1"));
+  crumbs();
+  setTimeout(openFlavor,reduced?200:1500);
+};
+
+/* ---------- facts ---------- */
+const facts=[
+  ["月","Kuning telur adalah bulan","Telur asin di tengah kue melambangkan bulan purnama yang bulat dan terang."],
+  ["圆","Kue untuk berkumpul","Mooncake dipotong dan dibagi ke seluruh keluarga. Bentuk bulatnya melambangkan keluarga yang utuh (团圆)."],
+  ["秋","Tanggalnya selalu berubah","Festival jatuh pada hari ke-15 bulan ke-8 kalender lunar, jadi tanggal Masehinya berganti setiap tahun."],
+  ["模","Motif dari cetakan","Hiasan di permukaan kue dibuat dengan cetakan kayu berukir berisi huruf, bunga, atau nama isiannya."],
+  ["雪","Ada yang tidak dipanggang","Snow skin mooncake dibuat dari tepung ketan, disajikan dingin, dan mulai populer di Hong Kong."],
+  ["饼","Punya banyak nama","Di Indonesia disebut kue bulan, dalam bahasa Mandarin yuèbǐng (月饼), dan dalam Hokkien gwee pia."],
+  ["兔","Legenda sampai ke luar angkasa","Program penjelajahan bulan Tiongkok dinamai Chang'e, dan rovernya bernama Yutu, si Kelinci Giok."],
+  ["酥","Ada versi berlapis renyah","Mooncake gaya Suzhou memakai kulit berlapis-lapis yang renyah, beda dengan gaya Kanton yang lembut dan mengilap."],
+  ["甜","Kecil tapi padat kalori","Gula, minyak, dan telur asin membuat satu kue utuh mengandung ratusan kalori. Paling nikmat sepotong kecil dengan teh."],
+  ["信","Legenda pesan rahasia","Konon di akhir Dinasti Yuan, pesan pemberontakan diselipkan di dalam mooncake. Kebenarannya masih diperdebatkan sejarawan."]
+];
+const grid=$("#factGrid");
+facts.forEach(([g,t,b])=>{
+  const el=document.createElement("button");
+  el.className="fact";el.setAttribute("aria-pressed","false");
+  el.innerHTML=`<div class="fact-in">
+    <div class="face front"><div class="glyph" aria-hidden="true">${g}</div><h3>${t}</h3><span class="tap">Ketuk untuk membalik</span></div>
+    <div class="face back-face" data-g="${g}"><h3>${t}</h3><span>${b}</span></div></div>`;
+  el.onclick=()=>{const f=el.classList.toggle("flipped");el.setAttribute("aria-pressed",f);};
+  grid.appendChild(el);
+});
+
+/* ---------- stories + quiz ---------- */
+const stories=[
+  {glyph:"日",title:"Sepuluh Matahari",sub:"后羿射日",
+   body:["Dahulu kala, langit memiliki sepuluh matahari. Mereka adalah anak-anak Kaisar Langit yang seharusnya terbit bergantian, satu matahari setiap hari.",
+   "Suatu hari, kesepuluh matahari itu bosan dan terbit bersamaan. Bumi menjadi sangat panas. Sungai mengering, tanaman layu, dan manusia kelaparan.",
+   "Seorang pemanah gagah bernama Hou Yi naik ke puncak gunung. Dengan busur merahnya, ia memanah jatuh sembilan matahari satu per satu. Ia sengaja menyisakan satu matahari agar bumi tetap terang dan hangat.",
+   "Rakyat bersorak dan menjadikannya pahlawan. Sebagai hadiah, Ratu Ibu dari Barat memberi Hou Yi sebuah ramuan keabadian. Namun ramuan itu hanya cukup untuk satu orang..."],
+   quiz:[
+    ["Berapa jumlah matahari di langit pada awal cerita?",["Sepuluh","Tiga","Tujuh","Dua belas"]],
+    ["Apa yang terjadi saat semua matahari terbit bersamaan?",["Sungai mengering dan tanaman layu","Bumi membeku","Turun salju","Bulan menghilang"]],
+    ["Berapa matahari yang dipanah jatuh oleh Hou Yi?",["Sembilan","Sepuluh","Lima","Satu"]],
+    ["Mengapa Hou Yi menyisakan satu matahari?",["Agar bumi tetap terang dan hangat","Anak panahnya habis","Ia terlalu lelah","Matahari itu bersembunyi"]],
+    ["Siapa yang memberi Hou Yi ramuan keabadian?",["Ratu Ibu dari Barat","Kaisar Langit","Kelinci Giok","Wu Gang"]]]},
+  {glyph:"嫦",title:"Chang'e Terbang ke Bulan",sub:"嫦娥奔月",
+   body:["Hou Yi tinggal bersama istrinya yang baik hati, Chang'e. Karena ramuan keabadian hanya cukup untuk satu orang, Hou Yi tidak mau meminumnya. Ia tidak ingin hidup abadi tanpa Chang'e, jadi ramuan itu disimpan di dalam sebuah kotak.",
+   "Hou Yi punya banyak murid. Salah satunya, Peng Meng, diam-diam mengincar ramuan itu. Pada hari ke-15 bulan ke-8, saat Hou Yi pergi berburu, Peng Meng menerobos masuk dan memaksa Chang'e menyerahkannya.",
+   "Agar ramuan tidak jatuh ke tangan orang jahat, Chang'e meminumnya sendiri. Tubuhnya menjadi ringan dan melayang ke langit. Ia memilih tinggal di bulan, tempat yang paling dekat dengan bumi, supaya tetap bisa melihat suaminya.",
+   "Hou Yi pulang dan menangis memandang bulan yang malam itu bersinar paling terang. Ia menata meja di taman berisi buah dan kue kesukaan Chang'e. Rakyat yang mendengar kisah ini ikut melakukannya, dan dari sinilah tradisi menikmati kue di bawah bulan purnama berawal."],
+   quiz:[
+    ["Siapa nama istri Hou Yi?",["Chang'e","Peng Meng","Yutu","Ratu Ibu dari Barat"]],
+    ["Mengapa Hou Yi tidak meminum ramuannya?",["Ia tidak ingin abadi tanpa Chang'e","Rasanya pahit","Ramuannya hilang","Dilarang gurunya"]],
+    ["Siapa murid yang ingin mencuri ramuan?",["Peng Meng","Wu Gang","Hou Yi","Kelinci Giok"]],
+    ["Mengapa Chang'e memilih tinggal di bulan?",["Paling dekat dengan bumi dan suaminya","Karena di sana dingin","Diperintah Kaisar","Ada istana emas"]],
+    ["Apa yang ditata Hou Yi di taman untuk Chang'e?",["Buah dan kue kesukaan Chang'e","Lentera dan bunga","Busur dan panah","Surat cinta"]]]},
+  {glyph:"兔",title:"Kelinci Giok",sub:"玉兔捣药",
+   body:["Di bulan yang sunyi, Chang'e tidak sendirian untuk waktu yang lama. Beginilah kisah tentang siapa yang menemaninya.",
+   "Suatu hari, Kaisar Giok turun ke bumi dengan menyamar sebagai pengemis tua yang kelaparan. Ia meminta makanan kepada tiga sahabat: monyet, rubah, dan kelinci.",
+   "Monyet memanjat pohon dan membawa buah. Rubah menangkap ikan dari sungai. Kelinci kecil tidak bisa membawa apa pun karena ia hanya makan rumput. Tanpa ragu, kelinci berkata, \"Makanlah aku,\" lalu melompat ke api unggun.",
+   "Kaisar Giok tersentuh oleh ketulusannya dan menyelamatkannya dari api. Kelinci itu dibawa ke bulan dan diberi nama Kelinci Giok. Di sana ia menemani Chang'e dan setiap hari menumbuk ramuan dengan lesung dan alu. Saat purnama, bayangannya bisa terlihat di permukaan bulan."],
+   quiz:[
+    ["Kaisar Giok menyamar sebagai apa?",["Pengemis tua yang lapar","Pedagang kaya","Pemburu","Petani"]],
+    ["Apa yang dibawa monyet?",["Buah","Ikan","Rumput","Kue"]],
+    ["Apa yang dilakukan kelinci?",["Melompat ke api unggun","Lari bersembunyi","Mencuri makanan","Menangkap ikan"]],
+    ["Apa tugas Kelinci Giok di bulan?",["Menumbuk ramuan dengan lesung","Menebang pohon","Menjaga pintu istana","Menyalakan lentera"]],
+    ["Siapa yang ditemani Kelinci Giok di bulan?",["Chang'e","Hou Yi","Peng Meng","Monyet"]]]},
+  {glyph:"桂",title:"Wu Gang dan Pohon Osmanthus",sub:"吴刚伐桂",
+   body:["Selain Chang'e dan Kelinci Giok, bulan punya satu penghuni lagi. Namanya Wu Gang.",
+   "Wu Gang ingin menjadi abadi dan belajar ilmu dari para dewa. Sayangnya, ia tidak sabar dan sering bermalas-malasan. Para dewa pun menghukumnya.",
+   "Ia dikirim ke bulan untuk menebang sebuah pohon osmanthus raksasa. Ia boleh pulang jika pohon itu tumbang. Tetapi setiap kali kapaknya membelah batang, lukanya langsung menutup kembali. Sampai hari ini, Wu Gang masih terus menebang.",
+   "Saat musim gugur, harum bunga osmanthus seakan turun ke bumi. Pada malam hari ke-15 bulan ke-8, keluarga berkumpul, makan mooncake bersama, lalu memandang bulan sambil mencari bayangan Chang'e, Kelinci Giok, dan pohon Wu Gang."],
+   quiz:[
+    ["Siapa penghuni bulan yang menebang pohon?",["Wu Gang","Hou Yi","Peng Meng","Kaisar Giok"]],
+    ["Mengapa Wu Gang dihukum?",["Tidak sabar dan malas belajar","Mencuri ramuan","Memanah matahari","Merusak istana"]],
+    ["Pohon apa yang ia tebang?",["Osmanthus","Bambu","Pinus","Plum"]],
+    ["Apa yang terjadi setiap kali batangnya terbelah?",["Lukanya menutup kembali","Pohonnya tumbang","Keluar emas","Bunganya layu"]],
+    ["Apa yang dilakukan keluarga pada malam festival?",["Berkumpul, makan mooncake, dan memandang bulan","Tidur lebih awal","Memanah bulan","Menebang pohon"]]]}
+];
+let si=0;
+const dotsEl=$("#storyDots");
+stories.forEach(()=>dotsEl.appendChild(document.createElement("span")));
+
+function renderStory(){
+  const s=stories[si];
+  $("#storyGlyph").textContent=s.glyph;
+  $("#storyCount").textContent=`Kisah ${si+1} dari ${stories.length}`;
+  $("#storyTitle").textContent=s.title;
+  $("#storySub").textContent=s.sub;
+  $("#storyBody").innerHTML=s.body.map(p=>`<p></p>`).join("");
+  $("#storyBody").querySelectorAll("p").forEach((p,i)=>p.textContent=s.body[i]);
+  [...dotsEl.children].forEach((d,i)=>d.classList.toggle("on",i<=si));
+  const next=$("#nextStory");
+  next.textContent=si<stories.length-1?"Selanjutnya":"Selesai";
+  startQuiz();
+}
+$("#nextStory").onclick=()=>{
+  if(si<stories.length-1){si++;renderStory();window.scrollTo({top:0,behavior:reduced?"auto":"smooth"});}
+  else{si=0;show("home");setSplit(true);toast("Kamu sudah membaca semua kisah!");}
+};
+
+let qi=0,score=0,order=[];
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function startQuiz(){qi=0;score=0;renderQ();}
+function renderQ(){
+  const quiz=stories[si].quiz, area=$("#qArea");
+  $("#qBar").style.width=(qi/quiz.length*100)+"%";
+  if(qi>=quiz.length){
+    $("#qMeta").textContent="Kuis selesai";
+    const msg=score===5?"Sempurna! Kamu menyimak ceritanya dengan baik.":score>=3?"Bagus! Hampir semua benar.":"Baca lagi ceritanya, lalu coba ulang.";
+    area.innerHTML=`<div class="qresult"><div class="big">${score}/5</div><p>${msg}</p><button class="back" id="retry">Ulangi kuis</button></div>`;
+    $("#retry").onclick=startQuiz;return;
+  }
+  $("#qMeta").textContent=`Soal ${qi+1} dari ${quiz.length}`;
+  const [q,opts]=quiz[qi]; const correct=opts[0];
+  area.innerHTML=`<p class="qtext"></p><div class="opts"></div><p class="qfeed" aria-live="polite"></p>`;
+  area.querySelector(".qtext").textContent=q;
+  const box=area.querySelector(".opts"), feed=area.querySelector(".qfeed");
+  shuffle(opts).forEach(o=>{
+    const b=document.createElement("button");b.className="opt";b.textContent=o;
+    b.onclick=()=>{
+      box.querySelectorAll(".opt").forEach(x=>{x.disabled=true;if(x.textContent===correct)x.classList.add("right");});
+      if(o===correct){score++;feed.textContent="Benar!";}
+      else{b.classList.add("wrong");feed.textContent="Belum tepat. Jawabannya: "+correct;}
+      const n=document.createElement("button");n.className="btn";n.textContent=qi===quiz.length-1?"Lihat skor":"Soal berikutnya";
+      n.onclick=()=>{qi++;renderQ();};area.appendChild(n);n.focus({preventScroll:true});
+    };
+    box.appendChild(b);
+  });
+}
+
+/* ---------- contest ---------- */
+const contests={
+  story:{title:"Storytelling",hz:"讲故事比赛",text:"Lomba storytelling bahasa Mandarin, diadakan di SMA BPK Penabur Holis."},
+  culinary:{title:"Culinary",hz:"美食比赛",text:"Lomba culinary, diadakan di SMA BPK Penabur Holis."}
+};
+const cpanel=$("#cpanel");
+document.querySelectorAll(".ctab").forEach(t=>{
+  t.onclick=()=>{
+    const open=t.getAttribute("aria-expanded")==="true";
+    document.querySelectorAll(".ctab").forEach(x=>x.setAttribute("aria-expanded","false"));
+    if(open){cpanel.hidden=true;return;}
+    t.setAttribute("aria-expanded","true");
+    const c=contests[t.dataset.c];
+    cpanel.hidden=false;
+    cpanel.style.animation="none";void cpanel.offsetWidth;cpanel.style.animation="";
+    cpanel.innerHTML=`<h3></h3><p class="brush" style="color:var(--gold);font-size:1.4rem;margin:0 0 10px"></p><p class="desc"></p>
+      <div class="place"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12Z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="10" r="2.5" fill="currentColor"/></svg>SMA BPK Penabur Holis</div>`;
+    cpanel.querySelector("h3").textContent="Lomba "+c.title;
+    cpanel.querySelector(".brush").textContent=c.hz;
+    cpanel.querySelector(".desc").textContent=c.text;
+  };
+});
+
+/* ---------- lanterns (realtime) ---------- */
+const skyGrid=$("#skyGrid"), lanternSec=$("#lantern");
+const els=new Map(), mine=new Set();
+let col=null, firstSnap=true, localList=[];
+
+function hash(str){let h=2166136261;for(const ch of str){h^=ch.charCodeAt(0);h=Math.imul(h,16777619);}return (h>>>0)/4294967295;}
+function setCount(n,capped){document.querySelectorAll(".lcount").forEach(b=>b.textContent=capped?n+"+":n);}
+function showScreen(which){
+  const sky=which==="sky";
+  $("#writeScreen").hidden=sky;
+  $("#skyScreen").hidden=!sky;
+  lanternSec.classList.toggle("sky-mode",sky);
+  window.scrollTo({top:0});
+}
+$("#seeSky").onclick=()=>showScreen("sky");
+$("#addLantern").onclick=()=>{showScreen("write");setTimeout(()=>$("#wish").focus({preventScroll:true}),50);};
+document.querySelectorAll("[data-back]").forEach(b=>b.addEventListener("click",()=>showScreen("write")));
+
+function makeLantern(id,text){
+  const el=document.createElement("button");
+  el.className="sl";
+  el.style.setProperty("--off",(hash(id+"o")*46).toFixed(0)+"px");
+  el.style.setProperty("--bd",(2.6+hash(id+"d")*2.6).toFixed(2)+"s");
+  el.style.setProperty("--dl",(-hash(id+"l")*4).toFixed(2)+"s");
+  el.style.setProperty("--hue",((hash(id+"h")-.5)*26).toFixed(0)+"deg");
+  el.innerHTML='<span class="cap"></span><span class="bd"><span class="tx"></span></span><span class="cap b"></span><span class="ts"></span>';
+  el.querySelector(".tx").textContent=text||"...";
+  el.setAttribute("aria-label","Lentera: "+(text||"harapan"));
+  el.onclick=()=>toast(text?`“${text}”`:"Sebuah harapan tanpa kata");
+  return el;
+}
+function markMine(el){
+  if(el.classList.contains("mine"))return;
+  el.classList.add("mine");
+  const t=document.createElement("span");t.className="tag";t.textContent="Lenteramu";el.prepend(t);
+}
+function renderSky(items){
+  // items: [{id,text}] newest first
+  const keep=new Set(items.map(i=>i.id));
+  for(const [id,el] of els){if(!keep.has(id)){el.remove();els.delete(id);}}
+  items.forEach((it,i)=>{
+    let el=els.get(it.id);
+    if(!el){
+      el=makeLantern(it.id,it.text);els.set(it.id,el);
+      if(!firstSnap&&!reduced)el.classList.add("arrive");
+    }
+    if(mine.has(it.id))markMine(el);
+    if(skyGrid.children[i]!==el)skyGrid.insertBefore(el,skyGrid.children[i]||null);
+  });
+  $("#skyEmpty").hidden=items.length>0;
+  firstSnap=false;
+}
+renderSky([]);
+
+(async()=>{
+  let db=null;
+  try{db=window.claude&&window.claude.use?await window.claude.use("db"):null;}catch(e){db=null;}
+  if(!db)return;
+  col=db.collection("lanterns");
+  firstSnap=true;
+  col.orderBy("ts","desc").limit(1000).onSnapshot(snap=>{
+    setCount(snap.size,snap.size>=1000);
+    const items=snap.docs.map(d=>{const data=d.data()||{};return {id:d.id,text:String(data.text||"").slice(0,60)};});
+    if(localList.length){localList=[];}
+    renderSky(items);
+  },()=>toast("Koneksi langit terputus. Muat ulang halaman untuk melihat lentera terbaru."));
+})();
+
+function launchVisual(text){
+  if(reduced)return Promise.resolve();
+  const src=$("#bigLantern"), r=src.getBoundingClientRect();
+  const clone=src.cloneNode(true);
+  clone.removeAttribute("id");clone.classList.add("flying");
+  clone.style.left=r.left+"px";clone.style.top=r.top+"px";clone.style.width=r.width+"px";clone.style.margin="0";
+  const ta=clone.querySelector("textarea");ta.value=text;ta.removeAttribute("id");ta.tabIndex=-1;ta.readOnly=true;
+  clone.querySelector("label")?.remove();
+  document.body.appendChild(clone);
+  src.style.visibility="hidden";
+  const up=r.top+r.height;
+  return new Promise(res=>{
+    clone.animate([
+      {transform:"translate(0,0) scale(1) rotate(0)",opacity:1},
+      {transform:`translate(-16px,-${up*.4}px) scale(.75) rotate(-4deg)`,opacity:1,offset:.4},
+      {transform:`translate(0,-${up}px) scale(.3) rotate(3deg)`,opacity:0}
+    ],{duration:2300,easing:"cubic-bezier(.4,.05,.6,1)",fill:"forwards"}).onfinish=()=>{clone.remove();src.style.visibility="";res();};
+  });
+}
+
+let sending=false;
+$("#lanternForm").onsubmit=async e=>{
+  e.preventDefault();
+  if(sending)return;
+  const ta=$("#wish"), text=ta.value.trim().slice(0,60);
+  if(!text){toast("Tulis harapanmu dulu di lentera.");ta.focus();return;}
+  sending=true;
+  let id, ok=true;
+  if(col){
+    const ref=col.doc();id=ref.id;mine.add(id);
+    const write=ref.set({text,ts:Date.now()}).catch(err=>{
+      ok=false;mine.delete(id);
+      toast(err&&err.code==="quota_exceeded"?"Langit sudah penuh lentera. Lentera baru belum bisa diterbangkan.":"Lentera gagal terbang. Coba tekan Terbangkan lagi.");
+    });
+    await Promise.all([launchVisual(text),write]);
+  }else{
+    id="local"+Date.now();mine.add(id);
+    await launchVisual(text);
+    localList.unshift({id,text});setCount(localList.length,false);renderSky(localList);
+  }
+  sending=false;
+  if(!ok){ta.value=text;return;}
+  ta.value="";
+  showScreen("sky");
+  const el=els.get(id);
+  if(el){el.classList.remove("arrive");void el.offsetWidth;if(!reduced)el.classList.add("arrive");}
+  toast("Lenteramu sudah terbang ✨");
+};
+</script>
+</body>
+</html>
