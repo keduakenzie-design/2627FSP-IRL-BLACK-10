@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KRAFT // STUDIO — Luxury Brutalist Design System</title>
+  
+  <!-- Fontshare & Google Fonts CDN -->
+  <link rel="preconnect" href="https://api.fontshare.com">
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=clash-display@600,700&f[]=satoshi@400,500,700&display=swap">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,400;1,600&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            offwhite: '#f2f2f2',
+            deepblack: '#111111',
+            mutedgray: '#838282',
+            lightgray: '#b6b5b5',
+            darkbg: '#1e1e1e',
+            borderline: 'rgba(30, 30, 30, 0.1)',
+            footergray: 'rgba(246, 246, 246, 0.6)'
+          },
+          fontFamily: {
+            clash: ['Clash Display', 'sans-serif'],
+            satoshi: ['Satoshi', 'sans-serif'],
+            serifitalic: ['Cormorant Garamond', 'serif']
+          },
+          transitionTimingFunction: {
+            editorial: 'cubic-bezier(0.77, 0, 0.175, 1)'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom ease transition for editorial smoothness */
+    .transition-editorial {
+      transition: all 700ms cubic-bezier(0.77, 0, 0.175, 1);
+    }
+    
+    .img-editorial {
+      filter: grayscale(20%) brightness(0.95);
+      transition: transform 700ms cubic-bezier(0.77, 0, 0.175, 1), filter 700ms cubic-bezier(0.77, 0, 0.175, 1);
+    }
+    
+    .group:hover .img-editorial,
+    .img-editorial:hover {
+      filter: grayscale(0%) brightness(1);
+      transform: scale(1.05);
+    }
+
+    /* Custom scrollbar for brutalist feel */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f2f2f2;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #111111;
+    }
+
+    /* Selection styling */
+    ::selection {
+      background: #111111;
+      color: #f2f2f2;
+    }
+
+    /* Echo stack offset positioning rules */
+    .echo-stack {
+      position: relative;
+      display: inline-block;
+      user-select: none;
+      line-height: 0.88;
+      letter-spacing: -0.05em;
+    }
+
+    .echo-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      transition: transform 700ms cubic-bezier(0.77, 0, 0.175, 1), opacity 700ms cubic-bezier(0.77, 0, 0.175, 1);
+    }
+
+    .echo-1 { transform: translate(-0.04em, -0.04em); color: #bfbfbf; z-index: 4; }
+    .echo-2 { transform: translate(-0.08em, -0.08em); color: #c9c9c9; z-index: 3; }
+    .echo-3 { transform: translate(-0.12em, -0.12em); color: #d1d1d1; z-index: 2; }
+    .echo-4 { transform: translate(-0.16em, -0.16em); color: #d9d9d9; z-index: 1; }
+
+    .group:hover .echo-1 { transform: translate(-0.06em, -0.06em); }
+    .group:hover .echo-2 { transform: translate(-0.12em, -0.12em); }
+    .group:hover .echo-3 { transform: translate(-0.18em, -0.18em); }
+    .group:hover .echo-4 { transform: translate(-0.24em, -0.24em); }
+
+    /* Vertical line divider pulse */
+    .hairline-divider {
+      width: 1px;
+      background-color: rgba(30, 30, 30, 0.15);
+    }
+  </style>
+</head>
+<body class="bg-[#f2f2f2] text-[#111111] font-satoshi antialiased selection:bg-[#111111] selection:text-[#f2f2f2]">
+
+  <header class="fixed top-0 left-0 w-full h-[80px] bg-[#f2f2f2]/90 backdrop-blur-md z-50 border-b border-[#1e1e1e]/10 transition-editorial">
+    <div class="max-w-[1440px] mx-auto h-full px-6 lg:px-12 flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <a href="#" class="font-clash font-bold text-xl md:text-2xl tracking-tighter text-[#111111] flex items-center gap-2 group">
+        <span class="inline-block w-3 h-3 bg-[#111111] group-hover:scale-125 transition-editorial"></span>
+        <span>KRAFT <span class="text-mutedgray font-normal">//</span> STUDIO</span>
+      </a>
+
+      <!-- Desktop Navigation -->
+      <nav class="hidden md:flex items-center space-x-10">
+        <a href="#hero" class="text-[14px] uppercase font-satoshi font-medium tracking-widest text-[#111111] hover:text-[#b6b5b5] transition-editorial">01 // Echo</a>
+        <a href="#philosophy" class="text-[14px] uppercase font-satoshi font-medium tracking-widest text-[#111111] hover:text-[#b6b5b5] transition-editorial">02 // Manifesto</a>
+        <a href="#showcase" class="text-[14px] uppercase font-satoshi font-medium tracking-widest text-[#111111] hover:text-[#b6b5b5] transition-editorial">03 // Archives</a>
+        <a href="#services" class="text-[14px] uppercase font-satoshi font-medium tracking-widest text-[#111111] hover:text-[#b6b5b5] transition-editorial">04 // Directives</a>
+      </nav>
+
+      <!-- Contact CTA Button -->
+      <div class="hidden md:flex items-center space-x-4">
+        <button onclick="toggleModal('contactModal')" class="px-6 py-2.5 rounded-full border border-[#1e1e1e] text-[13px] uppercase font-satoshi font-bold tracking-wider text-[#111111] hover:bg-[#111111] hover:text-[#f2f2f2] transition-editorial cursor-pointer">
+          INITIATE CONTACT
+        </button>
+      </div>
+
+      <!-- Mobile Hamburger Button -->
+      <button onclick="toggleMobileMenu()" class="md:hidden flex flex-col justify-center items-center w-8 h-8 space-y-1.5 focus:outline-none" aria-label="Toggle Navigation">
+        <span class="w-6 h-[2px] bg-[#111111] transition-editorial" id="line1"></span>
+        <span class="w-6 h-[2px] bg-[#111111] transition-editorial" id="line2"></span>
+      </button>
+    </div>
+
+    <!-- Mobile Nav Overlay -->
+    <div id="mobileMenu" class="hidden md:hidden fixed inset-x-0 top-[80px] bg-[#f2f2f2] border-b border-[#1e1e1e]/20 p-8 flex flex-col space-y-6 shadow-2xl transition-editorial">
+      <a href="#hero" onclick="toggleMobileMenu()" class="text-xl font-clash font-bold tracking-tight text-[#111111]">01 // ECHO HERO</a>
+      <a href="#philosophy" onclick="toggleMobileMenu()" class="text-xl font-clash font-bold tracking-tight text-[#111111]">02 // MANIFESTO</a>
+      <a href="#showcase" onclick="toggleMobileMenu()" class="text-xl font-clash font-bold tracking-tight text-[#111111]">03 // ARCHIVES GRID</a>
+      <a href="#services" onclick="toggleMobileMenu()" class="text-xl font-clash font-bold tracking-tight text-[#111111]">04 // DIRECTIVES</a>
+      <button onclick="toggleMobileMenu(); toggleModal('contactModal')" class="w-full py-3 rounded-full border border-[#1e1e1e] bg-[#111111] text-[#f2f2f2] text-sm uppercase font-bold tracking-widest">
+        INITIATE CONTACT
+      </button>
+    </div>
+  </header>
+
+  <section id="hero" class="relative min-h-screen pt-[120px] pb-16 flex flex-col justify-between items-center max-w-[1440px] mx-auto px-6 lg:px-12 overflow-hidden">
+    
+    <!-- Top Metadata indicator -->
+    <div class="w-full flex justify-between items-center text-xs uppercase tracking-widest text-mutedgray font-satoshi font-medium pt-4">
+      <span class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-[#111111] animate-ping"></span>
+        MONOCHROME EDITION 2026
+      </span>
+      <span>GENEVA // ZÜRICH // TOKYO</span>
+      <span class="hidden sm:inline">LAT. 46.2044° N, LONG. 6.1432° E</span>
+    </div>
+
+    <!-- Central Typographic Echo Stack Container -->
+    <div class="my-auto py-12 text-center w-full flex flex-col items-center justify-center">
+      
+      <!-- Interactive Word Switcher Pill -->
+      <div class="mb-8 flex items-center gap-2 bg-white/60 backdrop-blur-sm p-1.5 rounded-full border border-[#1e1e1e]/10">
+        <span class="text-[10px] uppercase tracking-widest font-bold px-3 text-mutedgray">Echo Word:</span>
+        <button onclick="changeEchoText('MONOLITH')" class="echo-btn px-3 py-1 rounded-full text-xs font-bold uppercase transition-editorial bg-[#111111] text-[#f2f2f2]" data-word="MONOLITH">MONOLITH</button>
+        <button onclick="changeEchoText('MANIFESTO')" class="echo-btn px-3 py-1 rounded-full text-xs font-bold uppercase transition-editorial text-[#111111] hover:bg-black/10" data-word="MANIFESTO">MANIFESTO</button>
+        <button onclick="changeEchoText('TECTONIC')" class="echo-btn px-3 py-1 rounded-full text-xs font-bold uppercase transition-editorial text-[#111111] hover:bg-black/10" data-word="TECTONIC">TECTONIC</button>
+        <button onclick="changeEchoText('SYNTHESIS')" class="echo-btn px-3 py-1 rounded-full text-xs font-bold uppercase transition-editorial text-[#111111] hover:bg-black/10" data-word="SYNTHESIS">SYNTHESIS</button>
+      </div>
+
+      <!-- The Core Typographic Echo Stack -->
+      <div class="group cursor-pointer my-4 py-2">
+        <div class="echo-stack font-clash font-bold text-[11vw] leading-[0.85] tracking-[-0.05em] uppercase">
+          
+          <!-- Layer 5 (Deepest Gray #d9d9d9) -->
+          <span id="echo4" class="echo-layer echo-4 select-none">MONOLITH</span>
+          
+          <!-- Layer 4 (#d1d1d1) -->
+          <span id="echo3" class="echo-layer echo-3 select-none">MONOLITH</span>
+          
+          <!-- Layer 3 (#c9c9c9) -->
+          <span id="echo2" class="echo-layer echo-2 select-none">MONOLITH</span>
+          
+          <!-- Layer 2 (#bfbfbf) -->
+          <span id="echo1" class="echo-layer echo-1 select-none">MONOLITH</span>
+          
+          <!-- Foreground Main Layer (#111111) -->
+          <span id="echoMain" class="relative z-10 text-[#111111] transition-editorial">MONOLITH</span>
+        </div>
+      </div>
+
+      <!-- Editorial Subtitle -->
+      <p class="max-w-xl text-center text-sm md:text-base text-mutedgray font-satoshi font-medium tracking-wide mt-6 leading-relaxed">
+        A rigorous design architecture driven by monolithic weight, sharp structural symmetry, and absolute monochromatic restraint.
+      </p>
+
+    </div>
+
+    <!-- Bottom Indicator Grid -->
+    <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-6 pt-8 border-t border-[#1e1e1e]/10 items-end">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-[1px] bg-[#111111]"></div>
+        <span class="text-xs uppercase tracking-widest font-bold text-[#111111]">SWISS DESIGN RADICALISM</span>
+      </div>
+      <div class="text-center hidden md:block">
+        <a href="#philosophy" class="inline-flex flex-col items-center group text-xs uppercase tracking-widest text-[#111111] font-bold">
+          <span class="mb-1 group-hover:translate-y-1 transition-editorial">SCROLL TO DISCOVER</span>
+          <svg class="w-4 h-4 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+        </a>
+      </div>
+      <div class="text-right text-xs text-mutedgray tracking-widest uppercase font-mono">
+        SYSTEM REVISION // 03.2026
+      </div>
+    </div>
+
+  </section>
+
+  <section id="philosophy" class="py-24 bg-[#f2f2f2] border-t border-[#1e1e1e]/10 relative">
+    
+    <!-- Vertical Hairline Divider -->
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 h-16 hairline-divider"></div>
+
+    <div class="max-w-[1440px] mx-auto px-6 lg:px-12 pt-8">
+      
+      <div class="text-xs font-satoshi font-bold uppercase tracking-widest text-mutedgray mb-8 flex items-center gap-2">
+        <span class="w-3 h-[1px] bg-[#111111]"></span>
+        SECTION II // THE PHILOSOPHY
+      </div>
+
+      <!-- Editorial Large Scale Quote -->
+      <blockquote class="max-w-5xl mx-auto text-center my-12">
+        <p class="font-clash font-semibold text-3xl sm:text-5xl md:text-6xl text-[#111111] leading-[1.05] tracking-tight">
+          "Architecture is <span class="font-serifitalic font-normal italic text-4xl sm:text-6xl md:text-7xl px-1 text-[#111111]">Sculpture</span> stripped of utility to expose raw structural essentialism."
+        </p>
+      </blockquote>
+
+      <!-- Hairline Horizontal Divider -->
+      <div class="w-full h-[1px] bg-[#1e1e1e]/10 my-16"></div>
+
+      <!-- 3-Column Informational Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+        
+        <!-- Column 1 -->
+        <div class="p-6 border-l border-[#1e1e1e]/10 hover:border-[#111111] transition-editorial">
+          <span class="text-xs font-mono font-bold text-mutedgray uppercase tracking-widest block mb-4">01 // PRINCIPLE</span>
+          <h3 class="font-clash font-bold text-2xl text-[#111111] mb-4 tracking-tight">I. TECTONIC FORM</h3>
+          <p class="font-satoshi text-sm text-mutedgray leading-relaxed font-medium">
+            We prioritize raw geometric silhouette over superfluous ornament. Every visual element serves a deliberate structural purpose, reinforcing clarity and spatial harmony without dilution.
+          </p>
+        </div>
+
+        <!-- Column 2 -->
+        <div class="p-6 border-l border-[#1e1e1e]/10 hover:border-[#111111] transition-editorial">
+          <span class="text-xs font-mono font-bold text-mutedgray uppercase tracking-widest block mb-4">02 // PRINCIPLE</span>
+          <h3 class="font-clash font-bold text-2xl text-[#111111] mb-4 tracking-tight">II. MONOCHROME RADICALISM</h3>
+          <p class="font-satoshi text-sm text-mutedgray leading-relaxed font-medium">
+            By eliminating distracting chromatic palettes, we unlock the timeless power of light, shadow, texture, and typographic hierarchy. Darkness and light define the form.
+          </p>
+        </div>
+
+        <!-- Column 3 -->
+        <div class="p-6 border-l border-[#1e1e1e]/10 hover:border-[#111111] transition-editorial">
+          <span class="text-xs font-mono font-bold text-mutedgray uppercase tracking-widest block mb-4">03 // PRINCIPLE</span>
+          <h3 class="font-clash font-bold text-2xl text-[#111111] mb-4 tracking-tight">III. SPATIAL ECHO</h3>
+          <p class="font-satoshi text-sm text-mutedgray leading-relaxed font-medium">
+            Rhythm in design is achieved through layered repetition and offset typography. The echo effect represents the vibration of form propagating through digital space.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <section id="showcase" class="py-24 bg-[#f2f2f2] border-t border-[#1e1e1e]/10">
+    <div class="max-w-[1440px] mx-auto px-6 lg:px-12">
+      
+      <!-- Section Header & Filter Controls -->
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+        <div>
+          <div class="text-xs font-satoshi font-bold uppercase tracking-widest text-mutedgray mb-3 flex items-center gap-2">
+            <span class="w-3 h-[1px] bg-[#111111]"></span>
+            SECTION III // CURATED ARCHIVES
+          </div>
+          <h2 class="font-clash font-bold text-4xl md:text-5xl text-[#111111] tracking-tight">
+            ASYMMETRICAL SHOWCASE
+          </h2>
+        </div>
+        
+        <!-- Filter Tabs -->
+        <div class="flex flex-wrap gap-2 text-xs font-bold uppercase tracking-wider">
+          <button onclick="filterShowcase('all')" class="filter-btn px-4 py-2 rounded-full border border-[#1e1e1e] bg-[#111111] text-[#f2f2f2] transition-editorial" data-filter="all">ALL WORKS (04)</button>
+          <button onclick="filterShowcase('monolith')" class="filter-btn px-4 py-2 rounded-full border border-[#1e1e1e]/20 text-[#111111] hover:border-[#111111] transition-editorial" data-filter="monolith">MONOLITHIC</button>
+          <button onclick="filterShowcase('interiors')" class="filter-btn px-4 py-2 rounded-full border border-[#1e1e1e]/20 text-[#111111] hover:border-[#111111] transition-editorial" data-filter="interiors">INTERIORS</button>
+        </div>
+      </div>
+
+      <!-- 12-Column Asymmetrical Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+        
+        <!-- ITEM 1: Large 8-Column Rectangular Card -->
+        <div class="showcase-card monolith md:col-span-8 group relative overflow-hidden rounded-sm bg-[#e5e5e5] border border-[#1e1e1e]/10 cursor-pointer" onclick="openLightbox('MONOLITHIC COMPLEX // ZÜRICH', 'Raw reinforced concrete structures with precision light corridors.', 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=80')">
+          <div class="h-[480px] w-full overflow-hidden relative">
+            <img 
+              src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=80" 
+              alt="Monolithic Architectural Pavilion" 
+              class="img-editorial w-full h-full object-cover"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80 group-hover:opacity-90 transition-editorial"></div>
+            
+            <div class="absolute bottom-0 left-0 p-8 w-full flex justify-between items-end text-white">
+              <div>
+                <span class="text-xs uppercase tracking-widest text-[#b6b5b5] font-mono block mb-2">ARCHIVE // 001</span>
+                <h3 class="font-clash font-bold text-2xl md:text-3xl">MONOLITHIC COMPLEX</h3>
+                <p class="text-xs text-lightgray font-satoshi mt-1">ZÜRICH, SWITZERLAND — 2025</p>
+              </div>
+              <span class="w-10 h-10 rounded-full border border-white/30 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-editorial">
+                ↗
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ITEM 2: Vertical 4-Column Pill-Shaped Showcase Card (Height 500px, full border-radius 9999px) -->
+        <div class="showcase-card interiors md:col-span-4 group relative h-[500px] rounded-full overflow-hidden border border-[#1e1e1e]/20 bg-[#e0e0e0] cursor-pointer" onclick="openLightbox('SPATIAL ATRIUM // KYOTO', 'Elliptical vertical light shaft framed by honed basalt stone.', 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=80')">
+          <img 
+            src="https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=80" 
+            alt="Pill Shaped Atrium" 
+            class="img-editorial w-full h-full object-cover"
+          />
+          <div class="absolute inset-0 bg-black/30 group-hover:bg-black/50 transition-editorial"></div>
+          
+          <!-- Centered Circular Overlay (visible on hover) -->
+          <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-editorial">
+            <div class="w-32 h-32 rounded-full border border-white/80 backdrop-blur-md bg-black/40 text-white flex flex-col items-center justify-center p-2 text-center transform scale-90 group-hover:scale-100 transition-editorial">
+              <span class="text-[10px] uppercase font-bold tracking-widest">EXPLORE</span>
+              <span class="font-clash font-bold text-xs mt-1">ATRIUM</span>
+              <span class="text-[9px] text-lightgray mt-0.5">KYOTO</span>
+            </div>
+          </div>
+
+          <div class="absolute bottom-10 inset-x-0 text-center text-white pointer-events-none group-hover:opacity-0 transition-editorial">
+            <span class="text-xs uppercase tracking-widest font-mono text-lightgray">ARCHIVE // 002</span>
+            <h4 class="font-clash font-bold text-lg">VERTICAL ATRIUM</h4>
+          </div>
+        </div>
+
+        <!-- ITEM 3: Circular 5-Column Aspect-Square Image Container (border-radius 50%) -->
+        <div class="showcase-card monolith md:col-span-5 group relative aspect-square rounded-full overflow-hidden border border-[#1e1e1e]/20 bg-[#d9d9d9] cursor-pointer mx-auto w-full max-w-[420px]" onclick="openLightbox('CIRCULAR OCULUS // REYKJAVIK', 'Pure geometric reflection of natural light through circular aperture.', 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80')">
+          <img 
+            src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80" 
+            alt="Circular Oculus Architecture" 
+            class="img-editorial w-full h-full object-cover"
+          />
+          <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-editorial"></div>
+          <div class="absolute inset-0 flex flex-col items-center justify-center text-white p-6 text-center opacity-0 group-hover:opacity-100 transition-editorial bg-black/40 backdrop-blur-xs">
+            <span class="text-xs font-mono uppercase tracking-widest text-lightgray mb-1">ARCHIVE // 003</span>
+            <h3 class="font-clash font-bold text-2xl">CIRCULAR OCULUS</h3>
+            <p class="text-xs text-lightgray mt-2 max-w-[200px]">GEOMETRIC DUALITY IN REYKJAVIK</p>
+          </div>
+        </div>
+
+        <!-- ITEM 4: Wide 7-Column Rectangular Card -->
+        <div class="showcase-card interiors md:col-span-7 group relative overflow-hidden rounded-sm bg-[#e5e5e5] border border-[#1e1e1e]/10 cursor-pointer h-[420px]" onclick="openLightbox('BRUTALIST RESIDENCE // BERLIN', 'Cantilevered exposed concrete slabs with panoramic shadow play.', 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1600&q=80')">
+          <img 
+            src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1600&q=80" 
+            alt="Brutalist Concrete Residence" 
+            class="img-editorial w-full h-full object-cover"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80 group-hover:opacity-90 transition-editorial"></div>
+          
+          <div class="absolute bottom-0 left-0 p-8 w-full flex justify-between items-end text-white">
+            <div>
+              <span class="text-xs uppercase tracking-widest text-[#b6b5b5] font-mono block mb-2">ARCHIVE // 004</span>
+              <h3 class="font-clash font-bold text-2xl md:text-3xl">BRUTALIST PAVILION</h3>
+              <p class="text-xs text-lightgray font-satoshi mt-1">BERLIN, GERMANY — 2026</p>
+            </div>
+            <span class="w-10 h-10 rounded-full border border-white/30 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-editorial">
+              ↗
+            </span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <section id="services" class="py-24 bg-[#f2f2f2] border-t border-[#1e1e1e]/10">
+    <div class="max-w-[1440px] mx-auto px-6 lg:px-12">
+      
+      <div class="text-xs font-satoshi font-bold uppercase tracking-widest text-mutedgray mb-3 flex items-center gap-2">
+        <span class="w-3 h-[1px] bg-[#111111]"></span>
+        SECTION IV // SPECIALIZED DIRECTIVES
+      </div>
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+        <h2 class="font-clash font-bold text-4xl md:text-5xl text-[#111111] tracking-tight">
+          BESPOKE SERVICES
+        </h2>
+        <p class="text-sm text-mutedgray max-w-md font-medium">
+          Comprehensive spatial, typographic, and architectural design methodologies crafted for discerning institutions.
+        </p>
+      </div>
+
+      <!-- 3-Column Grid of Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        
+        <!-- Service Card 1 -->
+        <div class="group p-8 border border-[#1e1e1e]/10 bg-transparent hover:bg-white hover:shadow-2xl transition-editorial flex flex-col justify-between h-[420px] rounded-sm cursor-pointer" onclick="openServiceModal('01 // MONOLITHIC SPATIAL PLANNING', 'Architectural composition rooted in geometric proportion, exposed raw materials, and structural permanence.', ['Structural Blueprinting', 'Site Spatial Analysis', 'Material Tactility Synthesis'])">
+          <div>
+            <!-- Geometric Icon Container (64x64px) rotating 12 deg on hover -->
+            <div class="w-16 h-16 bg-[#111111] text-[#f2f2f2] flex items-center justify-center mb-8 transform group-hover:rotate-12 transition-editorial rounded-xs">
+              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+            </div>
+            
+            <span class="text-xs font-mono font-bold text-mutedgray tracking-widest block mb-2">DIRECTIVE // 001</span>
+            <h3 class="font-clash font-bold text-2xl text-[#111111] mb-4">SPATIAL ARCHITECTURE</h3>
+            <p class="text-sm text-mutedgray leading-relaxed font-medium">
+              Architectural composition rooted in geometric proportion, raw massing, and monumental spatial flow.
+            </p>
+          </div>
+
+          <div class="pt-6 border-t border-[#1e1e1e]/10 flex items-center justify-between group-hover:border-[#111111] transition-editorial">
+            <span class="text-xs font-satoshi font-bold tracking-widest text-[#111111] uppercase">EXPLORE DIRECTIVE</span>
+            <span class="font-bold text-lg transform group-hover:translate-x-2 transition-editorial">→</span>
+          </div>
+        </div>
+
+        <!-- Service Card 2 -->
+        <div class="group p-8 border border-[#1e1e1e]/10 bg-transparent hover:bg-white hover:shadow-2xl transition-editorial flex flex-col justify-between h-[420px] rounded-sm cursor-pointer" onclick="openServiceModal('02 // EDITORIAL TYPOGRAPHIC SYSTEMS', 'Custom high-contrast typographic hierarchy and echo layering for luxury brand identities.', ['Custom Font Creation', 'Editorial Design Systems', 'Type Kinetic Studies'])">
+          <div>
+            <!-- Geometric Icon Container (64x64px) rotating 12 deg on hover -->
+            <div class="w-16 h-16 bg-[#111111] text-[#f2f2f2] flex items-center justify-center mb-8 transform group-hover:rotate-12 transition-editorial rounded-xs">
+              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </div>
+            
+            <span class="text-xs font-mono font-bold text-mutedgray tracking-widest block mb-2">DIRECTIVE // 002</span>
+            <h3 class="font-clash font-bold text-2xl text-[#111111] mb-4">TYPOGRAPHIC SYSTEMS</h3>
+            <p class="text-sm text-mutedgray leading-relaxed font-medium">
+              Bespoke typography, structural layout systems, and high-contrast print and digital editorial direction.
+            </p>
+          </div>
+
+          <div class="pt-6 border-t border-[#1e1e1e]/10 flex items-center justify-between group-hover:border-[#111111] transition-editorial">
+            <span class="text-xs font-satoshi font-bold tracking-widest text-[#111111] uppercase">EXPLORE DIRECTIVE</span>
+            <span class="font-bold text-lg transform group-hover:translate-x-2 transition-editorial">→</span>
+          </div>
+        </div>
+
+        <!-- Service Card 3 -->
+        <div class="group p-8 border border-[#1e1e1e]/10 bg-transparent hover:bg-white hover:shadow-2xl transition-editorial flex flex-col justify-between h-[420px] rounded-sm cursor-pointer" onclick="openServiceModal('03 // MONOCHROME CURATION', 'Art direction, spatial installations, and exhibition design adhering to strict minimalist principles.', ['Exhibition Spatial Layout', 'Lighting & Shadow Curation', 'Monochrome Digital Art'])">
+          <div>
+            <!-- Geometric Icon Container (64x64px) rotating 12 deg on hover -->
+            <div class="w-16 h-16 bg-[#111111] text-[#f2f2f2] flex items-center justify-center mb-8 transform group-hover:rotate-12 transition-editorial rounded-xs">
+              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+            </div>
+            
+            <span class="text-xs font-mono font-bold text-mutedgray tracking-widest block mb-2">DIRECTIVE // 003</span>
+            <h3 class="font-clash font-bold text-2xl text-[#111111] mb-4">BRAND DIRECTION</h3>
+            <p class="text-sm text-mutedgray leading-relaxed font-medium">
+              Holistic identity systems for luxury ateliers, brutalist art institutions, and high-concept physical spaces.
+            </p>
+          </div>
+
+          <div class="pt-6 border-t border-[#1e1e1e]/10 flex items-center justify-between group-hover:border-[#111111] transition-editorial">
+            <span class="text-xs font-satoshi font-bold tracking-widest text-[#111111] uppercase">EXPLORE DIRECTIVE</span>
+            <span class="font-bold text-lg transform group-hover:translate-x-2 transition-editorial">→</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <section class="py-20 bg-[#e8e8e8] border-t border-b border-[#1e1e1e]/10">
+    <div class="max-w-[1440px] mx-auto px-6 lg:px-12">
+      <div class="bg-[#111111] text-[#f2f2f2] rounded-lg p-8 md:p-12 relative overflow-hidden">
+        <div class="relative z-10 grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+          <div class="md:col-span-7">
+            <span class="text-xs font-mono tracking-widest text-[#b6b5b5] block mb-2">// INTERACTIVE LAB</span>
+            <h3 class="font-clash font-bold text-3xl md:text-4xl text-white mb-4">COMMISSION A CUSTOM MONOLITH</h3>
+            <p class="text-sm text-[#b6b5b5] font-satoshi leading-relaxed max-w-xl">
+              Collaborate directly with our master typographers and spatial strategists to generate a bespoke editorial framework for your institution.
+            </p>
+          </div>
+          <div class="md:col-span-5 flex flex-col md:items-end justify-center">
+            <button onclick="toggleModal('contactModal')" class="px-8 py-4 bg-[#f2f2f2] text-[#111111] font-satoshi font-bold text-xs uppercase tracking-widest hover:bg-[#b6b5b5] transition-editorial rounded-full cursor-pointer w-full md:w-auto text-center">
+              REQUEST DOSSIER
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="bg-[#1e1e1e] text-[#f2f2f2] pt-20 pb-12 border-t border-white/5 font-satoshi">
+    <div class="max-w-[1440px] mx-auto px-6 lg:px-12">
+      
+      <!-- 4-Column Footer Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16 pb-16 border-b border-white/10">
+        
+        <!-- Col 1: Brand Summary -->
+        <div>
+          <a href="#" class="font-clash font-bold text-2xl tracking-tight text-white block mb-6">
+            KRAFT <span class="text-[#838282]">//</span> STUDIO
+          </a>
+          <p class="text-xs text-footergray leading-relaxed mb-6 font-medium">
+            Swiss minimalist design atelier dedicated to monolithic architectural concepts, typography-first systems, and radical editorial aesthetics.
+          </p>
+          <div class="text-[11px] font-mono text-[#838282]">
+            EST. 2026 // SWITZERLAND
+          </div>
+        </div>
+
+        <!-- Col 2: Navigation Index -->
+        <div>
+          <h4 class="text-xs font-mono font-bold uppercase tracking-widest text-[#838282] mb-6">NAVIGATION</h4>
+          <ul class="space-y-3 text-xs uppercase tracking-wider font-medium text-footergray">
+            <li><a href="#hero" class="hover:text-white transition-editorial">01 // ECHO STACK</a></li>
+            <li><a href="#philosophy" class="hover:text-white transition-editorial">02 // THE MANIFESTO</a></li>
+            <li><a href="#showcase" class="hover:text-white transition-editorial">03 // ARCHIVES GRID</a></li>
+            <li><a href="#services" class="hover:text-white transition-editorial">04 // DIRECTIVES</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 3: Company Links -->
+        <div>
+          <h4 class="text-xs font-mono font-bold uppercase tracking-widest text-[#838282] mb-6">DIRECTORY</h4>
+          <ul class="space-y-3 text-xs uppercase tracking-wider font-medium text-footergray">
+            <li><a href="#" onclick="alert('Monochrome Brand Guidelines v1.0 available on request.'); return false;" class="hover:text-white transition-editorial">BRAND GUIDELINES</a></li>
+            <li><a href="#" onclick="alert('Typographic Specimen PDF loaded.'); return false;" class="hover:text-white transition-editorial">TYPE SPECIMENS</a></li>
+            <li><a href="#" onclick="alert('Exhibition calendar: Geneva (April 2026), Tokyo (Oct 2026).'); return false;" class="hover:text-white transition-editorial">EXHIBITIONS</a></li>
+            <li><a href="#" onclick="alert('Press kit archive request logged.'); return false;" class="hover:text-white transition-editorial">PRESS DOSSIER</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 4: Contact Info -->
+        <div>
+          <h4 class="text-xs font-mono font-bold uppercase tracking-widest text-[#838282] mb-6">COORDINATES</h4>
+          <div class="space-y-4 text-xs font-medium text-footergray">
+            <div class="flex items-start gap-3">
+              <svg class="w-4 h-4 text-[#838282] mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+              <span>BAHNHOFSTRASSE 42<br>8001 ZÜRICH, SWITZERLAND</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <svg class="w-4 h-4 text-[#838282] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+              <a href="mailto:contact@kraftstudio.ch" class="hover:text-white transition-editorial">CONTACT@KRAFTSTUDIO.CH</a>
+            </div>
+            <div class="flex items-center gap-3">
+              <svg class="w-4 h-4 text-[#838282] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+              <span>+41 44 211 8000</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom Copyright Line -->
+      <div class="flex flex-col md:flex-row justify-between items-center text-[11px] font-mono text-[#838282] gap-4">
+        <div>
+          © 2026 KRAFT STUDIO AG. ALL RIGHTS RESERVED.
+        </div>
+        <div class="flex space-x-6">
+          <a href="#" onclick="alert('Privacy policy agreement displayed.'); return false;" class="hover:text-white transition-editorial">PRIVACY POLICY</a>
+          <a href="#" onclick="alert('Terms of service displayed.'); return false;" class="hover:text-white transition-editorial">TERMS OF SYSTEM</a>
+          <a href="#" onclick="alert('Cookies disabled by default.'); return false;" class="hover:text-white transition-editorial">NO COOKIES USED</a>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- Contact Modal -->
+  <div id="contactModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 transition-editorial">
+    <div class="bg-[#f2f2f2] text-[#111111] w-full max-w-xl p-8 md:p-12 rounded-sm border border-[#1e1e1e]/20 relative shadow-2xl">
+      <button onclick="toggleModal('contactModal')" class="absolute top-6 right-6 font-mono text-xl font-bold text-[#111111] hover:text-mutedgray transition-editorial">
+        ✕
+      </button>
+
+      <span class="text-xs font-mono font-bold tracking-widest text-mutedgray block mb-2">// INITIATE DOSSIER</span>
+      <h3 class="font-clash font-bold text-3xl mb-6">COMMISSION INQUIRY</h3>
+
+      <form onsubmit="handleContactSubmit(event)" class="space-y-4 font-satoshi">
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider mb-1 text-mutedgray">NAME / INSTITUTION</label>
+          <input type="text" required placeholder="e.g. Herzog & de Meuron Atelier" class="w-full bg-white border border-[#1e1e1e]/20 p-3 text-sm focus:outline-none focus:border-[#111111] transition-editorial">
+        </div>
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider mb-1 text-mutedgray">EMAIL ADDRESS</label>
+          <input type="email" required placeholder="architect@institution.com" class="w-full bg-white border border-[#1e1e1e]/20 p-3 text-sm focus:outline-none focus:border-[#111111] transition-editorial">
+        </div>
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider mb-1 text-mutedgray">PROJECT SCOPE</label>
+          <select class="w-full bg-white border border-[#1e1e1e]/20 p-3 text-sm focus:outline-none focus:border-[#111111] transition-editorial">
+            <option>01 // SPATIAL ARCHITECTURE</option>
+            <option>02 // TYPOGRAPHIC SYSTEM</option>
+            <option>03 // MONOCHROME BRAND DIRECTION</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider mb-1 text-mutedgray">DIRECTIVE SPECIFICATIONS</label>
+          <textarea rows="3" placeholder="Outline project objectives and spatial timelines..." class="w-full bg-white border border-[#1e1e1e]/20 p-3 text-sm focus:outline-none focus:border-[#111111] transition-editorial"></textarea>
+        </div>
+        <button type="submit" class="w-full py-4 bg-[#111111] text-[#f2f2f2] font-satoshi font-bold text-xs uppercase tracking-widest hover:bg-[#838282] transition-editorial mt-2 cursor-pointer">
+          TRANSMIT SPECIFICATIONS →
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Archive Lightbox Modal -->
+  <div id="lightboxModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 transition-editorial">
+    <div class="bg-[#1e1e1e] text-white w-full max-w-4xl rounded-sm overflow-hidden border border-white/10 relative">
+      <button onclick="toggleModal('lightboxModal')" class="absolute top-4 right-4 z-20 font-mono text-xl font-bold text-white bg-black/60 w-10 h-10 rounded-full flex items-center justify-center hover:bg-white hover:text-black transition-editorial">
+        ✕
+      </button>
+
+      <div class="grid grid-cols-1 md:grid-cols-12">
+        <div class="md:col-span-8 bg-black">
+          <img id="lightboxImg" src="" alt="Showcase detail" class="w-full h-[450px] object-cover">
+        </div>
+        <div class="md:col-span-4 p-8 flex flex-col justify-between">
+          <div>
+            <span class="text-xs font-mono text-[#838282] block mb-2">// ARCHIVE RECORD</span>
+            <h3 id="lightboxTitle" class="font-clash font-bold text-2xl text-white mb-4">ARCHIVE TITLE</h3>
+            <p id="lightboxDesc" class="text-xs text-footergray leading-relaxed font-satoshi mb-6">Description text...</p>
+          </div>
+          <button onclick="toggleModal('lightboxModal'); toggleModal('contactModal');" class="w-full py-3 border border-white/30 text-xs font-bold uppercase tracking-widest text-white hover:bg-white hover:text-black transition-editorial">
+            INQUIRE REGARDING PROJECT
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Service Detail Modal -->
+  <div id="serviceModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 transition-editorial">
+    <div class="bg-[#f2f2f2] text-[#111111] w-full max-w-lg p-8 md:p-10 rounded-sm border border-[#1e1e1e]/20 relative">
+      <button onclick="toggleModal('serviceModal')" class="absolute top-6 right-6 font-mono text-xl font-bold text-[#111111] hover:text-mutedgray transition-editorial">
+        ✕
+      </button>
+
+      <h3 id="serviceModalTitle" class="font-clash font-bold text-2xl mb-4">SERVICE DIRECTIVE</h3>
+      <p id="serviceModalDesc" class="text-sm text-mutedgray leading-relaxed mb-6 font-medium"></p>
+      
+      <div class="mb-8">
+        <h4 class="text-xs font-mono font-bold uppercase tracking-widest text-[#111111] mb-3">KEY CAPABILITIES</h4>
+        <ul id="serviceModalCapabilities" class="space-y-2 text-xs font-satoshi text-mutedgray">
+        </ul>
+      </div>
+
+      <button onclick="toggleModal('serviceModal'); toggleModal('contactModal');" class="w-full py-3 bg-[#111111] text-[#f2f2f2] font-satoshi font-bold text-xs uppercase tracking-widest hover:bg-[#838282] transition-editorial cursor-pointer">
+        INITIATE DIRECTIVE DISCUSSION
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast Notification Message -->
+  <div id="toast" class="fixed bottom-8 right-8 bg-[#111111] text-[#f2f2f2] px-6 py-4 rounded-sm border border-white/20 shadow-2xl z-50 transform translate-y-24 opacity-0 transition-editorial flex items-center gap-3">
+    <span class="w-2 h-2 rounded-full bg-white"></span>
+    <span id="toastMsg" class="text-xs font-satoshi font-bold tracking-wider"></span>
+  </div>
+
+  <script>
+    /* Interactive Mobile Menu Toggle */
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobileMenu');
+      const isHidden = menu.classList.contains('hidden');
+      if (isHidden) {
+        menu.classList.remove('hidden');
+      } else {
+        menu.classList.add('hidden');
+      }
+    }
+
+    /* Modal Handler */
+    function toggleModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal.classList.contains('hidden')) {
+        modal.classList.remove('hidden');
+      } else {
+        modal.classList.add('hidden');
+      }
+    }
+
+    /* Interactive Echo Text Swapper */
+    function changeEchoText(newWord) {
+      const main = document.getElementById('echoMain');
+      const e1 = document.getElementById('echo1');
+      const e2 = document.getElementById('echo2');
+      const e3 = document.getElementById('echo3');
+      const e4 = document.getElementById('echo4');
+
+      [main, e1, e2, e3, e4].forEach(el => {
+        if(el) el.textContent = newWord;
+      });
+
+      // Update active button state
+      document.querySelectorAll('.echo-btn').forEach(btn => {
+        if(btn.dataset.word === newWord) {
+          btn.classList.add('bg-[#111111]', 'text-[#f2f2f2]');
+          btn.classList.remove('text-[#111111]');
+        } else {
+          btn.classList.remove('bg-[#111111]', 'text-[#f2f2f2]');
+          btn.classList.add('text-[#111111]');
+        }
+      });
+
+      showToast(`ECHO STACK UPDATED: "${newWord}"`);
+    }
+
+    /* Showcase Grid Filter */
+    function filterShowcase(category) {
+      const cards = document.querySelectorAll('.showcase-card');
+      const buttons = document.querySelectorAll('.filter-btn');
+
+      buttons.forEach(btn => {
+        if(btn.dataset.filter === category) {
+          btn.classList.add('bg-[#111111]', 'text-[#f2f2f2]');
+          btn.classList.remove('text-[#111111]');
+        } else {
+          btn.classList.remove('bg-[#111111]', 'text-[#f2f2f2]');
+          btn.classList.add('text-[#111111]');
+        }
+      });
+
+      cards.forEach(card => {
+        if(category === 'all' || card.classList.contains(category)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    /* Lightbox Modal Opener */
+    function openLightbox(title, desc, imgSrc) {
+      document.getElementById('lightboxTitle').textContent = title;
+      document.getElementById('lightboxDesc').textContent = desc;
+      document.getElementById('lightboxImg').src = imgSrc;
+      toggleModal('lightboxModal');
+    }
+
+    /* Service Modal Opener */
+    function openServiceModal(title, desc, capabilities) {
+      document.getElementById('serviceModalTitle').textContent = title;
+      document.getElementById('serviceModalDesc').textContent = desc;
+      const capContainer = document.getElementById('serviceModalCapabilities');
+      capContainer.innerHTML = '';
+      capabilities.forEach(cap => {
+        const li = document.createElement('li');
+        li.className = 'flex items-center gap-2';
+        li.innerHTML = `<span class="w-1.5 h-1.5 bg-[#111111]"></span> ${cap}`;
+        capContainer.appendChild(li);
+      });
+      toggleModal('serviceModal');
+    }
+
+    /* Contact Form Submission Handler */
+    function handleContactSubmit(event) {
+      event.preventDefault();
+      toggleModal('contactModal');
+      showToast('SPECIFICATIONS TRANSMITTED // DOSSIER PENDING');
+    }
+
+    /* Toast Notification Trigger */
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      toastMsg.textContent = message;
+      toast.classList.remove('translate-y-24', 'opacity-0');
+      
+      setTimeout(() => {
+        toast.classList.add('translate-y-24', 'opacity-0');
+      }, 3500);
+    }
+  </script>
+</body>
+</html>
